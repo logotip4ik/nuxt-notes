@@ -4,26 +4,21 @@
       :src="`${$auth.user.picture}iasdfl;asdkljf;laskdf`"
       alt="profile avatar"
       class="navbar__avatar"
-      @click="isShowingDropdown = !isShowingDropdown"
+      data-click-outside-interact="false"
+      @click="hideDropdown"
     />
     <transition
       :css="false"
       @enter="enterDropdownAnimation"
       @leave="leaveDropdownAnimation"
     >
-      <ul v-if="isShowingDropdown" class="dropdown">
-        <li
-          class="dropdown__item"
-          @click="isShowingDropdown = !isShowingDropdown"
-        >
-          Dark Mode
-        </li>
-        <li
-          class="dropdown__item"
-          @click="isShowingDropdown = !isShowingDropdown"
-        >
-          Settings
-        </li>
+      <ul
+        v-if="isShowingDropdown"
+        v-click-outside="hideDropdown"
+        class="dropdown"
+      >
+        <li class="dropdown__item" @click="hideDropdown">Dark Mode</li>
+        <li class="dropdown__item" @click="hideDropdown">Settings</li>
         <li class="dropdown__item" @click="logout">Logout</li>
       </ul>
     </transition>
@@ -38,6 +33,9 @@ export default {
     isShowingDropdown: false,
   }),
   methods: {
+    hideDropdown() {
+      this.isShowingDropdown = !this.isShowingDropdown
+    },
     enterDropdownAnimation(el, onComplete) {
       const TL = gsap.timeline().pause()
       gsap.set(el, { transformOrigin: 'right top' })
