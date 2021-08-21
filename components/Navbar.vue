@@ -1,20 +1,81 @@
 <template>
   <nav class="navbar">
     <img
-      :src="$auth.user.picture"
+      :src="`${$auth.user.picture}iasdfl;asdkljf;laskdf`"
       alt="profile avatar"
       class="navbar__avatar"
+      @click="isShowingDropdown = !isShowingDropdown"
     />
+    <transition
+      :css="false"
+      @enter="enterDropdownAnimation"
+      @leave="leaveDropdownAnimation"
+    >
+      <ul v-if="isShowingDropdown" class="dropdown">
+        <li
+          class="dropdown__item"
+          @click="isShowingDropdown = !isShowingDropdown"
+        >
+          Dark Mode
+        </li>
+        <li
+          class="dropdown__item"
+          @click="isShowingDropdown = !isShowingDropdown"
+        >
+          Settings
+        </li>
+        <li class="dropdown__item" @click="logout">Logout</li>
+      </ul>
+    </transition>
   </nav>
 </template>
-// TODO: Create menu dropdown when cliking the img
+
 <script>
-export default {}
+import { gsap } from 'gsap'
+
+export default {
+  data: () => ({
+    isShowingDropdown: false,
+  }),
+  methods: {
+    enterDropdownAnimation(el, onComplete) {
+      const TL = gsap.timeline().pause()
+      gsap.set(el, { transformOrigin: 'right top' })
+
+      TL.fromTo(
+        el,
+        { opacity: 0, scale: 0.75 },
+        { opacity: 1, scale: 1, ease: 'back.out', duration: 0.3 }
+      )
+      TL.fromTo(
+        el.children,
+        { opacity: 0 },
+        { opacity: 1, stagger: 0.075, onComplete },
+        '-=.2'
+      )
+
+      TL.play()
+    },
+    leaveDropdownAnimation(el, onComplete) {
+      gsap.to(el, {
+        opacity: 0,
+        scale: 0.75,
+        ease: 'power2.out',
+        duration: 0.2,
+        onComplete,
+      })
+    },
+    async logout() {
+      await this.$auth.logout()
+    },
+  },
+}
 </script>
 
 <style>
 .navbar {
   width: 100%;
+  position: relative;
   padding: 0.5rem 0.75rem;
   background-color: var(--secondary-color);
   box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.25);
@@ -29,8 +90,76 @@ export default {}
   width: var(--size);
   height: var(--size);
 
-  border-radius: 50%;
   object-fit: cover;
+  border-radius: 50%;
   box-shadow: 0 0 10px -5px rgba(0, 0, 0, 0.25);
+  background-image: linear-gradient(to bottom, #444, #555);
+
+  transition: transform 0.2s ease-out;
+  cursor: pointer;
+}
+
+.navbar__avatar:hover {
+  transform: scale(1.025);
+}
+.navbar__avatar:active {
+  transform: scale(0.95);
+}
+
+.dropdown {
+  width: 100%;
+  max-width: 175px;
+
+  position: absolute;
+  top: 125%;
+  right: 1rem;
+
+  padding: 0.5rem 0;
+  border-radius: 0.5rem;
+  background-color: var(--secondary-color);
+  list-style-type: none;
+  z-index: 10;
+  /* shodows from: https://shadows.brumm.af/  */
+  /* prettier-ignore */
+  box-shadow:
+    0 0.8px 0.4px rgba(0, 0, 0, 0.025),
+    0 2px 1.5px rgba(0, 0, 0, 0.036),
+    0 3.8px 3.9px rgba(0, 0, 0, 0.045),
+    0 6.7px 8.6px rgba(0, 0, 0, 0.054),
+    0 12.5px 20.2px rgba(0, 0, 0, 0.065),
+    0 30px 80px rgba(0, 0, 0, 0.09)
+  ;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+}
+.dropdown__item {
+  width: 100%;
+  padding: 0 0.5rem 0.25rem;
+  cursor: pointer;
+
+  transition: background-color 0.3s ease-out;
+}
+
+.dropdown__item:hover {
+  transition: none;
+  background-color: var(--primary-color);
+}
+
+/* Little triangle at the top of dropdown */
+.dropdown:after {
+  --size: 10px;
+  content: '';
+
+  position: absolute;
+  bottom: 100%;
+  right: calc(1rem - calc(var(--size) / 1.9));
+
+  border-top: var(--size) solid transparent;
+  border-left: var(--size) solid transparent;
+  border-right: var(--size) solid transparent;
+  border-bottom: var(--size) solid var(--secondary-color);
 }
 </style>
