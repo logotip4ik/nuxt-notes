@@ -1,8 +1,11 @@
 <template>
-  <Fragment>
-    <Navbar></Navbar>
+  <div class="main" role="main">
     {{ loading }}
-  </Fragment>
+    <ul v-if="notes.length > 0" class="main__notes">
+      <li v-for="note in notes" :key="note.id">{{ note }}</li>
+    </ul>
+    <div v-else>Your notes are empty</div>
+  </div>
 </template>
 
 <script>
