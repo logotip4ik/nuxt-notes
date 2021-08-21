@@ -16,8 +16,8 @@
     "@nuxtjs/pwa": "^3.3.5",
     "cookie": "^0.4.1",
     "core-js": "^3.15.1",
-    "nuxt": "^2.15.7",
-    "vue-fragment": "^1.5.2"
+    "gsap": "^3.7.1",
+    "nuxt": "^2.15.7"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",
