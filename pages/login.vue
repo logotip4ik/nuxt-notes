@@ -6,6 +6,7 @@
 
 <script>
 export default {
+  layout: 'login',
   methods: {
     login() {
       this.$auth.loginWith('auth0')
