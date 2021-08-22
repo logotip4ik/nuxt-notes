@@ -1,7 +1,11 @@
 <template>
   <div class="main" role="main">
     <div class="main__content">
-      <button v-if="!isCreatingNote" class="main__content__banner">
+      <button
+        v-if="!isCreatingNote"
+        class="main__content__banner"
+        @click="() => createNote('')"
+      >
         Start typing to create a new note...
       </button>
       <transition name="fade" mode="out-in">
@@ -30,7 +34,8 @@
 
 <script>
 import { mapState } from 'vuex'
-
+// TODO: need to fix animtion when card is leaving the list
+// TODO(later): rework server, becouse it taking to much time to create, update and fetch all the notes
 export default {
   data: () => ({
     loading: true,
@@ -136,6 +141,7 @@ export default {
   font-weight: 400;
   text-align: left;
   color: var(--primary-color);
+  cursor: pointer;
 
   /* prettier-ignore  */
   box-shadow:
