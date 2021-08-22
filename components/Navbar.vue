@@ -98,7 +98,7 @@ export default {
 }
 
 .navbar__avatar:hover {
-  transform: scale(1.025);
+  transform: scale(1.005);
 }
 .navbar__avatar:active {
   transform: scale(0.95);
