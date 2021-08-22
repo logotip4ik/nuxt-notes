@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="__main">
     <Navbar />
     <Nuxt />
   </div>
@@ -9,4 +9,10 @@
 export default {}
 </script>
 
-<style></style>
+<style>
+#__nuxt,
+#__layout,
+.__main {
+  min-height: 100vh;
+}
+</style>
