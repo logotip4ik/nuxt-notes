@@ -62,6 +62,10 @@ export default {
     this.$refs.textarea.value = this.data.content
   },
   methods: {
+    /**
+     * @param {Boolean} val
+     * @default val = false
+     */
     toggleEditing(val = false) {
       this.$emit('update-editing', val)
       this.isEditing = val
@@ -75,26 +79,21 @@ export default {
       if (this.$nuxt.isOffline) return
       this.$axios
         .$delete(`${this.serverHost}/${this.serverStage}/note/${this.data.id}`)
-        .then(() => console.log('deleted note'))
+        .then(() => this.$toast.show(`deleted note: ${this.data.id}`))
+        .catch(() => this.$toast.error('something went, try again later...'))
     },
-    saveNote() {
-      document.activeElement = document.body
+    updateVuexNote(noteFromServer) {
       const newNotes = this.$store.state.notes.reduce(
         (acc, note) => [
           ...acc,
-          {
-            ...note,
-            title:
-              note.id === this.data.id ? this.$refs.input.value : note.title,
-            content:
-              note.id === this.data.id
-                ? this.$refs.textarea.value
-                : note.content,
-          },
+          note.id === noteFromServer.id ? noteFromServer : note,
         ],
         []
       )
       this.$store.commit('update', ['notes', newNotes])
+    },
+    saveNote() {
+      this.toggleEditing()
       if (this.$nuxt.isOffline) return
       const note = {
         title: this.$refs.input.value,
@@ -104,14 +103,26 @@ export default {
       if (!this.data.ownerId) {
         this.$axios
           .$post(`${this.serverHost}/${this.serverStage}/note`, note)
-          .then(() => console.log('created new note'))
+          .then(({ data }) => {
+            this.updateVuexNote(data)
+            this.$toast.success('created new note')
+          })
+          .catch(() =>
+            this.$toast.error('something went wrong, try again later')
+          )
       } else {
         this.$axios
           .$post(
             `${this.serverHost}/${this.serverStage}/note/${this.data.id}`,
             note
           )
-          .then(() => console.log('updated note'))
+          .then(({ data }) => {
+            this.updateVuexNote(data)
+            this.$toast.success('updated note')
+          })
+          .catch(() =>
+            this.$toast.error('something went wrong, try again later')
+          )
       }
     },
   },

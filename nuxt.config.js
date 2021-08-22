@@ -35,6 +35,7 @@ export default {
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     '@nuxtjs/auth-next',
+    '@nuxtjs/toast',
   ],
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: { manifest: { lang: 'en' } },
@@ -50,5 +51,9 @@ export default {
         audience: 'note-app-api',
       },
     },
+  },
+  toast: {
+    position: 'bottom-center',
+    duration: 2000,
   },
 }

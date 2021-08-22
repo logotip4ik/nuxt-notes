@@ -17,6 +17,7 @@
             :key="note.id"
             :ref="`note-${note.id}`"
             :data="note"
+            :data-id="note.id"
             class="main__content__notes__note"
             @update-editing="isEditingNote = $event"
           ></Card>
@@ -60,11 +61,22 @@ export default {
         input.focus()
       }, 0)
     },
+    checkNoteCancel() {
+      const inputOrTextarea = document.activeElement
+      const noteEl = inputOrTextarea.parentElement
+      const { id } = noteEl.dataset
+
+      const newNotes = this.$store.state.notes.filter(
+        (note) => note.id !== parseInt(id)
+      )
+      this.$store.commit('update', ['notes', newNotes])
+      this.isCreatingNote = false
+    },
     listenForKeyStrokes() {
       document.body.addEventListener(
         'keydown',
         ({ altKey, shiftKey, metaKey, key }) => {
-          if (key === 'Escape') return (this.isCreatingNote = false)
+          if (key === 'Escape') return this.checkNoteCancel()
           if (
             altKey ||
             shiftKey ||
@@ -79,9 +91,6 @@ export default {
           )
             return
           this.createNote(key)
-        },
-        {
-          capture: true,
         }
       )
     },
