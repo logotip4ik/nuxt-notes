@@ -1,5 +1,6 @@
 <template>
   <nav class="navbar">
+    <h1 class="navbar__header">Home</h1>
     <img
       :src="`${$auth.user.picture}iasdfl;asdkljf;laskdf`"
       alt="profile avatar"
@@ -79,8 +80,12 @@ export default {
   box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.25);
 
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+}
+.navbar__header {
+  font-size: 2rem;
+  font-weight: 400;
 }
 .navbar__avatar {
   --size: 50px;
