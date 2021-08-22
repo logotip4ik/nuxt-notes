@@ -85,7 +85,7 @@ export default {
 }
 .navbar__header {
   font-size: 2rem;
-  font-weight: 400;
+  font-weight: 300;
 }
 .navbar__avatar {
   --size: 50px;
