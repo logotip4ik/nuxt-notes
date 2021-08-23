@@ -35,7 +35,10 @@
 
 <script>
 import { mapState } from 'vuex'
+// TODO: add dark mode(see nuxt modules)
+// TODO: style login page
 // TODO(later): rework server, becouse it taking to much time to create, update and fetch all the notes
+// TODO(later): rework everthing to work offline
 export default {
   data: () => ({
     loading: true,

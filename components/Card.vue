@@ -219,6 +219,11 @@ export default {
 .card__content--html {
   min-height: 3rem;
   cursor: pointer;
+  padding-block: 0.5rem;
+}
+.card__content--html:is(:hover, :focus) {
+  border-radius: 0.5rem;
+  outline: 1px solid rgba(0, 0, 0, 0.05);
 }
 .card__content--html h1,
 h2,
@@ -227,6 +232,13 @@ h4,
 h5,
 h6 {
   font-weight: 400;
+}
+.card__content--html ul,
+ol,
+dl,
+dt,
+dd {
+  padding-left: 0.75rem;
 }
 
 .card__actions {
