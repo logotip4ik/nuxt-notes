@@ -1,27 +1,40 @@
 <template>
   <div
     :class="{ card: true, 'card--skeleton': skeleton }"
-    @keypress.ctrl.enter.prevent="saveNote"
+    @keypress.ctrl.enter="saveNote"
   >
     <input
       ref="input"
       class="card__title no-input"
       :readonly="skeleton ? 'readonly' : false"
       :placeholder="skeleton ? null : 'Untitled'"
-      @keypress.enter.prevent="() => $refs.textarea.focus()"
-      @focus="() => toggleEditing(true)"
-      @blur="() => toggleEditing()"
+      @keypress.enter="() => $refs.textarea.focus()"
+      @keypress.down="() => toggleEditing(true, 'textarea')"
+      @focus="() => toggleEditing(true, 'input')"
+      @blur="() => toggleEditing(false)"
     />
     <!-- TODO: fix textarea height in skeleton mode -->
     <textarea
+      v-if="isEditing"
       ref="textarea"
       class="card__content no-input"
       :readonly="skeleton ? 'readonly' : false"
       :rows="skeleton ? 1 : 3"
+      :value="data.content"
       :placeholder="skeleton ? null : '# Some markdown...'"
-      @focus="() => toggleEditing(true)"
-      @blur="() => toggleEditing()"
+      @keypress.up="() => toggleEditing(true, 'input')"
+      @focus="() => toggleEditing(true, 'textarea')"
+      @blur="() => toggleEditing(false)"
     ></textarea>
+    <!-- eslint-disable vue/no-v-html -->
+    <div
+      v-else
+      class="card__content card__content--html no-input"
+      @click="() => toggleEditing(true, 'textarea')"
+      @focus="() => toggleEditing(true, 'textarea')"
+      @blur="() => toggleEditing(false)"
+      v-html="markdown"
+    ></div>
     <div class="card__actions">
       <button
         class="card__actions__button card__actions__button--delete"
@@ -40,6 +53,8 @@
 
 <script>
 import { mapState } from 'vuex'
+import DOMPurify from 'dompurify'
+import marked from 'marked'
 
 export default {
   // TODO: add like blinking animation to placeholder text in skeleton mode(try to use only css)...
@@ -52,31 +67,38 @@ export default {
   }),
   computed: {
     markdown() {
-      return this.data.content
+      const html = marked(this.data.content || '', {
+        gfm: true,
+        headerIds: false,
+      })
+      if (process.server === true) return ''
+      return DOMPurify.sanitize(html)
     },
     ...mapState(['serverHost', 'serverStage']),
   },
   mounted() {
     if (this.skeleton) return
     this.$refs.input.value = this.data.title
-    this.$refs.textarea.value = this.data.content
   },
   methods: {
-    /**
-     * @param {Boolean} val
-     * @default val = false
-     */
-    toggleEditing(val = false) {
+    toggleEditing(val = false, el) {
       this.$emit('update-editing', val)
       this.isEditing = val
+
+      if (val && el) setTimeout(() => this.$refs[el].focus(), 0)
     },
-    deleteNote() {
-      const newNotes = this.$store.state.notes.filter(
-        (note) => note.id !== this.data.id
-      )
-      this.$store.commit('update', ['notes', newNotes])
+    deleteNote(sendReq = true) {
+      const { notes } = this.$store.state
+
+      for (let i = 0; i < notes.length; i++) {
+        if (notes[i].id === this.data.id) {
+          notes.splice(i, 1)
+          break
+        }
+      }
 
       if (this.$nuxt.isOffline) return
+      if (!sendReq) return
       this.$axios
         .$delete(`${this.serverHost}/${this.serverStage}/note/${this.data.id}`)
         .then(() => this.$toast.show(`deleted note: ${this.data.id}`))
@@ -93,36 +115,54 @@ export default {
       this.$store.commit('update', ['notes', newNotes])
     },
     saveNote() {
-      this.toggleEditing()
-      if (this.$nuxt.isOffline) return
-      const note = {
+      if (this.$nuxt.isOffline)
+        return this.$toast.error('You are offline, try again later')
+
+      let noteIdx
+      for (let i = 0; i < this.$store.state.notes.length; i++) {
+        const note = this.$store.state.notes[i]
+        if (note.id === this.data.id) {
+          noteIdx = i
+          break
+        }
+      }
+
+      this.$store.state.notes[noteIdx].title = this.$refs.input.value
+      this.$store.state.notes[noteIdx].content = this.$refs.textarea.value
+
+      this.$emit('update-creating', false)
+      this.toggleEditing(false)
+
+      const noteForReq = {
         title: this.$refs.input.value,
         content: this.$refs.textarea.value,
       }
 
       if (!this.data.ownerId) {
         this.$axios
-          .$post(`${this.serverHost}/${this.serverStage}/note`, note)
+          .$post(`${this.serverHost}/${this.serverStage}/note`, noteForReq)
           .then(({ data }) => {
             this.updateVuexNote(data)
             this.$toast.success('created new note')
           })
-          .catch(() =>
+          .catch(() => {
             this.$toast.error('something went wrong, try again later')
-          )
+            this.$store.state.notes.splice(noteIdx, 1)
+          })
       } else {
         this.$axios
           .$post(
             `${this.serverHost}/${this.serverStage}/note/${this.data.id}`,
-            note
+            noteForReq
           )
           .then(({ data }) => {
             this.updateVuexNote(data)
             this.$toast.success('updated note')
           })
-          .catch(() =>
+          .catch(() => {
             this.$toast.error('something went wrong, try again later')
-          )
+            this.$store.state.notes.splice(noteIdx, 1)
+          })
       }
     },
   },
@@ -170,10 +210,23 @@ export default {
 .card__title {
   width: 100%;
   font-size: 1.75rem;
+  font-weight: 500;
 }
 .card__content {
   width: 100%;
   font-size: 14px;
+}
+.card__content--html {
+  min-height: 3rem;
+  cursor: pointer;
+}
+.card__content--html h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 400;
 }
 
 .card__actions {
