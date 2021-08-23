@@ -142,7 +142,7 @@ export default {
         this.$axios
           .$post(`${this.serverHost}/${this.serverStage}/note`, noteForReq)
           .then(({ data }) => {
-            this.updateVuexNote(data)
+            this.$store.state.notes[noteIdx].ownerId = data.ownerId
             this.$toast.success('created new note')
           })
           .catch(() => {
