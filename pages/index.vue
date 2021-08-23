@@ -23,10 +23,11 @@
             :data="note"
             :data-id="note.id"
             class="main__content__notes__note"
+            @update-creating="isCreatingNote = $event"
             @update-editing="isEditingNote = $event"
           ></Card>
         </transition-group>
-        <Card v-else-if="loading" key="2" skeleton> </Card>
+        <Card v-else-if="loading" key="2" skeleton></Card>
       </transition>
     </div>
   </div>
@@ -34,11 +35,11 @@
 
 <script>
 import { mapState } from 'vuex'
-// TODO: need to fix animtion when card is leaving the list
 // TODO(later): rework server, becouse it taking to much time to create, update and fetch all the notes
 export default {
   data: () => ({
     loading: true,
+    currentNote: null,
     isCreatingNote: false,
     isEditingNote: false,
   }),
@@ -56,16 +57,17 @@ export default {
         title: '',
         content: '',
       }
-      this.$store.commit('update', ['notes', [note, ...this.notes]])
       this.isCreatingNote = true
+      this.$store.state.notes.unshift(note)
 
-      // ! need to set timeout, becouse
+      // ! need to set timeout, becouse of adding to the DOM
       setTimeout(() => {
         const input = this.$refs[`note-${note.id}`][0].$el.children[0]
         input.value = key
         input.focus()
-      }, 0)
+      })
     },
+    // TODO: rework esc keypress
     checkNoteCancel() {
       const inputOrTextarea = document.activeElement
       const noteEl = inputOrTextarea.parentElement
@@ -76,6 +78,7 @@ export default {
       )
       this.$store.commit('update', ['notes', newNotes])
       this.isCreatingNote = false
+      this.isEditingNote = false
     },
     listenForKeyStrokes() {
       document.body.addEventListener(
@@ -83,6 +86,7 @@ export default {
         ({ altKey, shiftKey, metaKey, key }) => {
           if (key === 'Escape') return this.checkNoteCancel()
           if (
+            this.loading ||
             altKey ||
             shiftKey ||
             metaKey ||
@@ -101,6 +105,11 @@ export default {
     },
     fetchNotes() {
       const { serverHost, serverStage } = this.$store.state
+      const { email, name, picture } = this.$auth.user
+
+      this.$axios.setHeader('Email', email)
+      this.$axios.setHeader('Name', name)
+      this.$axios.setHeader('Picture', picture)
 
       this.$axios
         .$get(`${serverHost}/${serverStage}/note`)
@@ -174,12 +183,12 @@ export default {
   opacity: 0;
 }
 
-.list-complete-enter-from,
-.list-complete-leave-to {
+.list-enter-from,
+.list-leave-to {
   opacity: 0;
 }
 
-.list-complete-leave-active {
+.list-leave-active {
   position: absolute;
 }
 </style>
