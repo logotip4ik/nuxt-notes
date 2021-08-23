@@ -18,6 +18,7 @@ html {
   font-family: system-ui, sans-serif;
 
   background-color: var(--surface-color);
+  overflow-x: hidden;
 }
 
 h1,
