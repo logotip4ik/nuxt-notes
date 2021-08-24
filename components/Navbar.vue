@@ -18,7 +18,9 @@
         v-click-outside="hideDropdown"
         class="dropdown"
       >
-        <li class="dropdown__item" @click="hideDropdown">Dark Mode</li>
+        <li class="dropdown__item" @click="toggleColorMode">
+          {{ currentModeName }} Mode
+        </li>
         <li class="dropdown__item" @click="hideDropdown">Settings</li>
         <li class="dropdown__item" @click="logout">Logout</li>
       </ul>
@@ -31,9 +33,25 @@ import { gsap } from 'gsap'
 
 export default {
   data: () => ({
+    currentMode: 0,
+    colorModes: ['system', 'light', 'dark'],
     isShowingDropdown: false,
   }),
+  computed: {
+    currentModeName() {
+      return this.colorModes[this.currentMode]
+        .split('')
+        .reduce(
+          (string, char, i) => string + (i === 0 ? char.toUpperCase() : char),
+          ''
+        )
+    },
+  },
   methods: {
+    toggleColorMode() {
+      this.currentMode = (this.currentMode + 1) % this.colorModes.length
+      this.$colorMode.preference = this.colorModes[this.currentMode]
+    },
     hideDropdown() {
       this.isShowingDropdown = !this.isShowingDropdown
     },

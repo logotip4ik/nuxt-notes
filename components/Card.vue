@@ -200,6 +200,7 @@ export default {
   resize: none;
   background: transparent;
   outline: none;
+  color: currentColor;
 
   display: inline-block;
 }
@@ -227,6 +228,9 @@ export default {
   justify-content: center;
   align-items: flex-start;
   gap: 1.5rem;
+}
+.dark-mode .card {
+  background-color: var(--primary-color);
 }
 
 .card__title {

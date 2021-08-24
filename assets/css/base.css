@@ -34,6 +34,17 @@ html {
   overflow-x: hidden;
 }
 
+html.dark-mode {
+  --surface-color: #232931;
+  --primary-color: #393e46;
+  --secondary-color: #4ecca3;
+  color: white;
+}
+
+* {
+  transition: color 0.3s, background-color 0.3s;
+}
+
 h1,
 h2,
 h3,
