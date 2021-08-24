@@ -17,7 +17,7 @@
           class="main__content__notes"
         >
           <Card
-            v-for="note in notes"
+            v-for="note in sortedNotes"
             :key="note.id"
             :ref="`note-${note.id}`"
             :data="note"
@@ -45,9 +45,18 @@ export default {
     currentNote: null,
     isCreatingNote: false,
     isEditingNote: false,
+    sortBy: 'updatedAt',
   }),
   computed: {
     ...mapState(['notes']),
+    sortedNotes() {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return this.notes.sort((a, b) => {
+        const aDate = new Date(a[this.sortBy])
+        const bDate = new Date(b[this.sortBy])
+        return bDate - aDate
+      })
+    },
   },
   mounted() {
     this.fetchNotes()
@@ -59,6 +68,8 @@ export default {
         id: Math.floor(Math.random() * 1000),
         title: '',
         content: '',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
       }
       this.isCreatingNote = true
       this.$store.state.notes.unshift(note)
