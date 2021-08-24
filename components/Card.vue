@@ -131,7 +131,7 @@ export default {
       if (!el) return
 
       el.style.height = 'auto'
-      el.style.height = `${el.scrollHeight}px`
+      el.style.height = `${el.scrollHeight + 1}px`
     },
     deleteNote(sendReq = true) {
       const { notes } = this.$store.state
@@ -248,7 +248,7 @@ export default {
 
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
   gap: 1.5rem;
 }
