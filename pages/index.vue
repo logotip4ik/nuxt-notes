@@ -35,8 +35,9 @@
 
 <script>
 import { mapState } from 'vuex'
-// TODO: add dark mode(see nuxt modules)
+// TODO: add dark mode(see nuxt modules https://color-mode.nuxtjs.org/)
 // TODO: style login page
+// TODO: on esc keypress if card has ownerId do nothing
 // TODO(later): rework server, becouse it taking to much time to create, update and fetch all the notes
 // TODO(later): rework everthing to work offline
 export default {
@@ -70,30 +71,17 @@ export default {
         input.focus()
       })
     },
-    // TODO: rework esc keypress
-    checkNoteCancel() {
-      const inputOrTextarea = document.activeElement
-      const noteEl = inputOrTextarea.parentElement
-      const { id } = noteEl.dataset
-
-      const newNotes = this.$store.state.notes.filter(
-        (note) => note.id !== parseInt(id)
-      )
-      this.$store.commit('update', ['notes', newNotes])
-      this.isCreatingNote = false
-      this.isEditingNote = false
-    },
     listenForKeyStrokes() {
       document.body.addEventListener(
         'keydown',
         ({ altKey, shiftKey, metaKey, key }) => {
-          if (key === 'Escape') return this.checkNoteCancel()
           if (
             this.loading ||
             altKey ||
             shiftKey ||
             metaKey ||
             key === 'Tab' ||
+            key === 'Escape' ||
             key === 'Control' ||
             key === 'CapsLock' ||
             key === 'Backspace' ||
@@ -102,6 +90,7 @@ export default {
             this.isCreatingNote
           )
             return
+
           this.createNote(key)
         }
       )
