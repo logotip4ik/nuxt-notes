@@ -1,8 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&display=swap');
 
 :root {
-  --primary-color: #ffc7c7;
+  /* PINK */
+  /* --primary-color: #ffc7c7;
   --secondary-color: #ffe2e2;
+  --surface-color: #f6f6f6; */
+  /* PURPLE */
+  /* --primary-color: #beaee2;
+  --secondary-color: #f7dbf0;
+  --surface-color: #f9f9f9; */
+  /* WARM GREEN */
+  /* --primary-color: #91c788;
+  --secondary-color: #ddffbc;
+  --surface-color: #feffde; */
+  /* COLD GREEN  */
+  --primary-color: #98ded9;
+  --secondary-color: #c7ffd8;
   --surface-color: #f6f6f6;
 }
 
