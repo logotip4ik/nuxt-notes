@@ -2,39 +2,42 @@
   <div
     :class="{ card: true, 'card--skeleton': skeleton }"
     @keypress.ctrl.enter="saveNote"
+    @keydown.esc.prevent="cancel"
+    @blur.capture="() => toggleEditing(false)"
   >
-    <input
-      ref="input"
+    <textarea
+      ref="title"
+      rows="1"
       class="card__title no-input"
       :readonly="skeleton ? 'readonly' : false"
       :placeholder="skeleton ? null : 'Untitled'"
-      @keypress.enter="() => $refs.textarea.focus()"
-      @keypress.down="() => toggleEditing(true, 'textarea')"
-      @focus="() => toggleEditing(true, 'input')"
-      @blur="() => toggleEditing(false)"
+      @input="() => resize('title')"
+      @keypress.enter.prevent="() => toggleEditing(true, 'content')"
+      @focus="() => toggleEditing(true, 'title')"
     />
+    <!-- @blur="() => toggleEditing(false)" -->
     <!-- TODO: fix textarea height in skeleton mode -->
     <textarea
       v-if="isEditing"
-      ref="textarea"
+      ref="content"
       class="card__content no-input"
       :readonly="skeleton ? 'readonly' : false"
       :rows="skeleton ? 1 : 3"
       :value="data.content"
       :placeholder="skeleton ? null : '# Some markdown...'"
-      @keypress.up="() => toggleEditing(true, 'input')"
-      @focus="() => toggleEditing(true, 'textarea')"
-      @blur="() => toggleEditing(false)"
+      @input="() => resize('content')"
+      @focus="() => toggleEditing(true, 'content')"
     ></textarea>
+    <!-- @blur="() => toggleEditing(false)" -->
     <!-- eslint-disable vue/no-v-html -->
     <div
       v-else
       class="card__content card__content--html no-input"
-      @click="() => toggleEditing(true, 'textarea')"
-      @focus="() => toggleEditing(true, 'textarea')"
-      @blur="() => toggleEditing(false)"
+      @click="() => toggleEditing(true, 'content')"
+      @focus="() => toggleEditing(true, 'content')"
       v-html="markdown"
     ></div>
+    <!-- @blur="() => toggleEditing(false)" -->
     <div class="card__actions">
       <button
         class="card__actions__button card__actions__button--delete"
@@ -57,6 +60,7 @@ import DOMPurify from 'dompurify'
 import marked from 'marked'
 
 export default {
+  // TODO: at editing replace junk button with key bindings to save and cancel creating or editing
   // TODO: add like blinking animation to placeholder text in skeleton mode(try to use only css)...
   props: {
     data: { type: Object, required: false, default: () => ({}) },
@@ -76,16 +80,47 @@ export default {
     },
     ...mapState(['serverHost', 'serverStage']),
   },
+  watch: {
+    isEditing(val) {
+      if (!val) return
+
+      setTimeout(() => {
+        this.resize('content')
+      }, 0)
+    },
+  },
   mounted() {
     if (this.skeleton) return
-    this.$refs.input.value = this.data.title
+    this.$refs.title.value = this.data.title
   },
   methods: {
+    cancel() {
+      this.$emit('update-creating', false)
+      this.toggleEditing(false)
+
+      setTimeout(
+        () => document.querySelector('.main__content__banner').focus(),
+        0
+      )
+
+      if (!this.data.title || !this.data.content) this.deleteNote(false)
+    },
     toggleEditing(val = false, el) {
       this.$emit('update-editing', val)
       this.isEditing = val
 
-      if (val && el) setTimeout(() => this.$refs[el].focus(), 0)
+      if (val && el)
+        setTimeout(() => {
+          this.resize(el)
+          this.$refs[el].focus()
+        }, 0)
+    },
+    resize(refId) {
+      const el = this.$refs[refId]
+      if (!el) return
+
+      el.style.height = 'auto'
+      el.style.height = `${el.scrollHeight + 2}px`
     },
     deleteNote(sendReq = true) {
       const { notes } = this.$store.state
@@ -104,16 +139,6 @@ export default {
         .then(() => this.$toast.show(`deleted note: ${this.data.id}`))
         .catch(() => this.$toast.error('something went, try again later...'))
     },
-    updateVuexNote(noteFromServer) {
-      const newNotes = this.$store.state.notes.reduce(
-        (acc, note) => [
-          ...acc,
-          note.id === noteFromServer.id ? noteFromServer : note,
-        ],
-        []
-      )
-      this.$store.commit('update', ['notes', newNotes])
-    },
     saveNote() {
       if (this.$nuxt.isOffline)
         return this.$toast.error('You are offline, try again later')
@@ -127,16 +152,16 @@ export default {
         }
       }
 
-      this.$store.state.notes[noteIdx].title = this.$refs.input.value
-      this.$store.state.notes[noteIdx].content = this.$refs.textarea.value
+      const noteForReq = {
+        title: this.$refs.title.value.trim(),
+        content: this.$refs.content.value.trim(),
+      }
+
+      this.$store.state.notes[noteIdx].title = noteForReq.title
+      this.$store.state.notes[noteIdx].content = noteForReq.content
 
       this.$emit('update-creating', false)
       this.toggleEditing(false)
-
-      const noteForReq = {
-        title: this.$refs.input.value,
-        content: this.$refs.textarea.value,
-      }
 
       if (!this.data.ownerId) {
         this.$axios
@@ -156,7 +181,6 @@ export default {
             noteForReq
           )
           .then(({ data }) => {
-            this.updateVuexNote(data)
             this.$toast.success('updated note')
           })
           .catch(() => {
@@ -187,7 +211,7 @@ export default {
 
   width: 100%;
 
-  padding: 1rem 1.5rem 1rem;
+  padding: 1rem 1.25rem 1rem;
   border-radius: 0.5rem;
   /* shadows from: https://shadows.brumm.af/ */
   /* prettier-ignore */
@@ -204,22 +228,30 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .card__title {
   width: 100%;
   font-size: 1.75rem;
   font-weight: 500;
+  padding-inline: 0.25rem;
+  overflow: hidden;
+}
+.card__title:is(:hover, :focus) {
+  border-radius: 0.5rem;
+  outline: 1px solid rgba(0, 0, 0, 0.05);
 }
 .card__content {
   width: 100%;
   font-size: 14px;
+  overflow: hidden;
 }
 .card__content--html {
   min-height: 3rem;
   cursor: pointer;
-  padding-block: 0.5rem;
+  padding-block: 0.25rem;
+  padding-inline: 0.25rem;
 }
 .card__content--html:is(:hover, :focus) {
   border-radius: 0.5rem;
