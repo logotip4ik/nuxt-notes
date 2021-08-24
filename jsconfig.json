@@ -7,7 +7,7 @@
       "~~/*": ["./*"],
       "@@/*": ["./*"]
     },
-    "types": ["@nuxtjs/types", "@nuxtjs/axios", "@nuxtjs/auth"]
+    "types": ["@nuxtjs/types", "@nuxtjs/axios", "@nuxtjs/color-mode"]
   },
   "exclude": ["node_modules", ".nuxt", "dist", "express-server"]
 }
