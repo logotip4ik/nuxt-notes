@@ -15,7 +15,6 @@
       @keypress.enter.prevent="() => toggleEditing(true, 'content')"
       @focus="() => toggleEditing(true, 'title')"
     />
-    <!-- @blur="() => toggleEditing(false)" -->
     <!-- TODO: fix textarea height in skeleton mode -->
     <textarea
       v-if="isEditing"
@@ -28,7 +27,6 @@
       @input="() => resize('content')"
       @focus="() => toggleEditing(true, 'content')"
     ></textarea>
-    <!-- @blur="() => toggleEditing(false)" -->
     <!-- eslint-disable vue/no-v-html -->
     <div
       v-else
@@ -37,8 +35,7 @@
       @focus="() => toggleEditing(true, 'content')"
       v-html="markdown"
     ></div>
-    <!-- @blur="() => toggleEditing(false)" -->
-    <div class="card__actions">
+    <div v-if="!skeleton" class="card__actions">
       <button
         class="card__actions__button card__actions__button--delete"
         @click="deleteNote"
@@ -98,12 +95,13 @@ export default {
       this.$emit('update-creating', false)
       this.toggleEditing(false)
 
-      setTimeout(
-        () => document.querySelector('.main__content__banner').focus(),
-        0
-      )
+      document.getElementById('dummy-input').focus()
 
       if (!this.data.title || !this.data.content) this.deleteNote(false)
+      else {
+        this.$refs.title.value = this.data.title
+        this.$refs.content.value = this.data.content
+      }
     },
     toggleEditing(val = false, el) {
       this.$emit('update-editing', val)

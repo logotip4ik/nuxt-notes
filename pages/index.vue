@@ -30,6 +30,7 @@
         <Card v-else-if="loading" key="2" skeleton></Card>
       </transition>
     </div>
+    <input id="dummy-input" aria-hidden="true" />
   </div>
 </template>
 
@@ -37,7 +38,6 @@
 import { mapState } from 'vuex'
 // TODO: add dark mode(see nuxt modules https://color-mode.nuxtjs.org/)
 // TODO: style login page
-// TODO: on esc keypress if card has ownerId do nothing
 // TODO(later): rework server, becouse it taking to much time to create, update and fetch all the notes
 // TODO(later): rework everthing to work offline
 export default {
@@ -142,6 +142,7 @@ export default {
   font-weight: 400;
   text-align: left;
   color: var(--primary-color);
+  outline-color: #ccc;
   cursor: pointer;
 
   /* prettier-ignore  */
@@ -153,6 +154,14 @@ export default {
     0 14.6px 33.4px rgba(0, 0, 0, 0.022),
     0 35px 80px rgba(0, 0, 0, 0.03)
   ;
+}
+
+#dummy-input {
+  width: 0;
+  height: 0;
+  position: fixed;
+  left: -200%;
+  top: 0;
 }
 
 .main__content__notes {
