@@ -1,7 +1,7 @@
 <template>
   <div
     :class="{ card: true, 'card--skeleton': skeleton }"
-    @keypress.ctrl.enter="saveNote"
+    @keypress.ctrl.enter.stop="saveNote"
     @keydown.esc.prevent="cancel"
     @blur.capture="() => toggleEditing(false)"
   >
@@ -12,16 +12,16 @@
       :readonly="skeleton ? 'readonly' : false"
       :placeholder="skeleton ? null : 'Untitled'"
       @input="() => resize('title')"
-      @keypress.enter.prevent="() => toggleEditing(true, 'content')"
+      @keyup.enter.prevent="() => toggleEditing(true, 'content')"
       @focus="() => toggleEditing(true, 'title')"
     />
     <!-- TODO: fix textarea height in skeleton mode -->
+    <!-- TODO: fix textarea in dark mode need some darker color -->
     <textarea
       v-if="isEditing"
       ref="content"
       class="card__content no-input"
       :readonly="skeleton ? 'readonly' : false"
-      :rows="skeleton ? 1 : 3"
       :value="data.content"
       :placeholder="skeleton ? null : '# Some markdown...'"
       @input="() => resize('content')"
@@ -36,23 +36,30 @@
       v-html="markdown"
     ></div>
     <div v-if="!skeleton" class="card__actions">
-      <button
-        class="card__actions__button card__actions__button--delete"
-        @click="deleteNote"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path
-            d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z"
-          />
-        </svg>
-        Junk
-      </button>
+      <p class="card__actions__created-at">
+        Created: {{ formatDateTime(data.createdAt) }}
+      </p>
+      <transition name="fade">
+        <button
+          v-if="!isEditing"
+          class="card__actions__button card__actions__button--delete"
+          @click="deleteNote"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z"
+            />
+          </svg>
+          Junk
+        </button>
+      </transition>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import { format } from 'timeago.js'
 import DOMPurify from 'dompurify'
 import marked from 'marked'
 
@@ -89,8 +96,12 @@ export default {
   mounted() {
     if (this.skeleton) return
     this.$refs.title.value = this.data.title
+    this.resize('title')
   },
   methods: {
+    formatDateTime(date) {
+      return format(new Date(date))
+    },
     cancel() {
       this.$emit('update-creating', false)
       this.toggleEditing(false)
@@ -104,6 +115,7 @@ export default {
       }
     },
     toggleEditing(val = false, el) {
+      this.$el.style.height = `${this.$el.scrollHeight}px`
       this.$emit('update-editing', val)
       this.isEditing = val
 
@@ -111,6 +123,7 @@ export default {
         setTimeout(() => {
           this.resize(el)
           this.$refs[el].focus()
+          this.$el.style.height = 'auto'
         }, 0)
     },
     resize(refId) {
@@ -118,7 +131,7 @@ export default {
       if (!el) return
 
       el.style.height = 'auto'
-      el.style.height = `${el.scrollHeight + 2}px`
+      el.style.height = `${el.scrollHeight}px`
     },
     deleteNote(sendReq = true) {
       const { notes } = this.$store.state
@@ -137,15 +150,21 @@ export default {
         .then(() => this.$toast.show(`deleted note: ${this.data.id}`))
         .catch(() => this.$toast.error('something went, try again later...'))
     },
+    updateNote(noteFromServer, noteFromVuex) {
+      noteFromVuex.id = noteFromServer.id
+      noteFromVuex.ownerId = noteFromServer.ownerId
+      noteFromVuex.updatedAt = noteFromServer.updatedAt
+      noteFromVuex.createdAt = noteFromServer.createdAt
+    },
     saveNote() {
       if (this.$nuxt.isOffline)
         return this.$toast.error('You are offline, try again later')
 
-      let noteIdx
+      let noteFromVuex
       for (let i = 0; i < this.$store.state.notes.length; i++) {
         const note = this.$store.state.notes[i]
         if (note.id === this.data.id) {
-          noteIdx = i
+          noteFromVuex = this.$store.state.notes[i]
           break
         }
       }
@@ -155,9 +174,11 @@ export default {
         content: this.$refs.content.value.trim(),
       }
 
-      this.$store.state.notes[noteIdx].title = noteForReq.title
-      this.$store.state.notes[noteIdx].content = noteForReq.content
+      noteFromVuex.title = noteForReq.title
+      noteFromVuex.content = noteForReq.content
+      noteFromVuex.updatedAt = Date.now()
 
+      document.getElementById('dummy-input').focus()
       this.$emit('update-creating', false)
       this.toggleEditing(false)
 
@@ -165,12 +186,12 @@ export default {
         this.$axios
           .$post(`${this.serverHost}/${this.serverStage}/note`, noteForReq)
           .then(({ data }) => {
-            this.$store.state.notes[noteIdx].ownerId = data.ownerId
+            this.updateNote(data, noteFromVuex)
             this.$toast.success('created new note')
           })
           .catch(() => {
             this.$toast.error('something went wrong, try again later')
-            this.$store.state.notes.splice(noteIdx, 1)
+            // this.$store.state.notes.splice(noteIdx, 1)
           })
       } else {
         this.$axios
@@ -179,11 +200,12 @@ export default {
             noteForReq
           )
           .then(({ data }) => {
+            this.updateNote(data, noteFromVuex)
             this.$toast.success('updated note')
           })
           .catch(() => {
             this.$toast.error('something went wrong, try again later')
-            this.$store.state.notes.splice(noteIdx, 1)
+            // this.$store.state.notes.splice(noteIdx, 1)
           })
       }
     },
@@ -201,6 +223,7 @@ export default {
   background: transparent;
   outline: none;
   color: currentColor;
+  height: auto;
 
   display: inline-block;
 }
@@ -239,6 +262,7 @@ export default {
   font-weight: 500;
   padding-inline: 0.25rem;
   overflow: hidden;
+  height: min-content;
 }
 .card__title:is(:hover, :focus) {
   border-radius: 0.5rem;
@@ -248,12 +272,11 @@ export default {
   width: 100%;
   font-size: 14px;
   overflow: hidden;
+  padding: 0.25rem;
 }
 .card__content--html {
   min-height: 3rem;
   cursor: pointer;
-  padding-block: 0.25rem;
-  padding-inline: 0.25rem;
 }
 .card__content--html:is(:hover, :focus) {
   border-radius: 0.5rem;
@@ -278,8 +301,16 @@ dd {
 .card__actions {
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+  --fill-or-color: hsl(0, 0%, 70%);
+}
+
+.card__actions__created-at {
+  color: var(--fill-or-color);
+  font-size: 0.9rem;
+  font-weight: 300;
+  padding-block: 0.27rem;
 }
 
 .card__actions__button {
@@ -289,7 +320,7 @@ dd {
   gap: 0.25rem;
 
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 
   block-size: 1.75rem;
   padding: 0.25rem 0.75rem;
@@ -298,9 +329,8 @@ dd {
   background-color: transparent;
   cursor: pointer;
 
-  --fill-color: hsl(0, 0%, 70%);
-  color: var(--fill-color);
-  fill: var(--fill-color);
+  color: var(--fill-or-color);
+  fill: var(--fill-or-color);
 
   transition: color 0.3s, background-color 0.3s, fill 0.3s;
 }
