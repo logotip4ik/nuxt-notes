@@ -15,8 +15,6 @@
       @keyup.enter.prevent="() => toggleEditing(true, 'content')"
       @focus="() => toggleEditing(true, 'title')"
     />
-    <!-- TODO: fix textarea height in skeleton mode -->
-    <!-- TODO: fix textarea in dark mode need some darker color -->
     <textarea
       v-if="isEditing"
       ref="content"
@@ -370,32 +368,9 @@ dd {
   border-radius: 0.25rem;
   background-color: #ccc;
 }
-/* .card--skeleton .card__content::after {
-  content: '';
-  position: absolute;
-  top: calc(100% + 1ch);
-  left: 0;
 
-  width: 98%;
-  height: 1ch;
-
-  font-size: var(--font-size-placeholder);
-
-  border-radius: 0.25rem;
-  background-color: #ccc;
+.dark-mode .card--skeleton .card__content,
+.dark-mode .card--skeleton .card__title {
+  background-color: #333;
 }
-.card--skeleton .card__content::before {
-  content: '';
-  position: absolute;
-  top: calc(100% + 3ch);
-  left: 0;
-
-  width: 102%;
-  height: 1ch;
-
-  font-size: var(--font-size-placeholder);
-
-  border-radius: 0.25rem;
-  background-color: #ccc;
-} */
 </style>
