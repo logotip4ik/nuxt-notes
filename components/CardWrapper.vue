@@ -63,9 +63,8 @@ export default {
 
 <style lang="scss">
 .card-wrapper {
-  overflow-y: hidden;
-
   .card__settings {
+    overflow-y: hidden;
     max-height: 0px;
   }
   &:focus,
