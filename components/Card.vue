@@ -38,7 +38,7 @@
       v-html="markdown"
     ></div>
     <div v-if="!skeleton" class="card__actions">
-      <transition name="fade">
+      <transition name="fade" mode="out-in">
         <button
           v-if="!isEditing && isCollapsable"
           class="card__actions__button card__actions__button--info"
@@ -46,6 +46,12 @@
         >
           Show Less
         </button>
+        <span
+          v-else-if="isEditing"
+          class="card__actions__button card__actions__button--keys"
+        >
+          Hit <kbd>Ctrl + S</kbd> to save
+        </span>
       </transition>
     </div>
     <transition name="fade">
@@ -350,6 +356,15 @@ export default {
       &--info {
         --focus-hover-color-fill: hsla(200, 80%, 50%, 0.7);
         --surface-color: hsla(200, 60%, 50%, 0.2);
+      }
+
+      &--keys {
+        --focus-hover-color-fill: hsla(0, 0%, 50%, 1);
+        --surface-color: hsla(0, 0%, 50%, 0.1);
+
+        background-color: var(--surface-color);
+        color: var(--focus-hover-color-fill);
+        fill: var(--focus-hover-color-fill);
       }
 
       &--delete {
