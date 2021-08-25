@@ -394,7 +394,8 @@ export default {
   }
 
   &__overflow {
-    // --bg-color: hsl(0, 0%, 50%);
+    --main-color: 220;
+    --bg-color: var(--main-color), var(--main-color), var(--main-color);
     position: absolute;
     left: 0;
     bottom: 0;
@@ -407,9 +408,9 @@ export default {
     border-radius: 0.5rem;
     background-image: linear-gradient(
       to top,
-      rgba($color: hsl(0, 0%, 40%), $alpha: 1) 15%,
-      rgba($color: hsl(0, 0%, 40%), $alpha: 0.5),
-      rgba($color: hsl(0, 0%, 40%), $alpha: 0)
+      rgba(var(--bg-color), 1) 15%,
+      rgba(var(--bg-color), 0.5),
+      rgba(var(--bg-color), 0)
     );
   }
 
@@ -437,9 +438,9 @@ export default {
   .card {
     background-color: var(--primary-color);
   }
-  // .card__overflow {
-  //   --bg-color: hsla(0, 0%, 30%, 0.2);
-  // }
+  .card__overflow {
+    --main-color: 100;
+  }
   .card--skeleton .card__content,
   .card--skeleton .card__title {
     background-color: #333;
