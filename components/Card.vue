@@ -52,6 +52,9 @@
         </button>
       </transition>
     </div>
+    <transition name="fade">
+      <div v-if="isCollapsed" class="card__overflow"></div>
+    </transition>
   </div>
 </template>
 
@@ -70,6 +73,7 @@ export default {
   },
   data: () => ({
     isEditing: false,
+    isCollapsed: true,
   }),
   computed: {
     markdown() {
@@ -211,7 +215,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .no-input {
   font: inherit;
 
@@ -249,128 +253,137 @@ export default {
   justify-content: flex-start;
   align-items: flex-start;
   gap: 1.5rem;
+
+  &__title {
+    font-size: 1.75rem;
+    font-weight: 500;
+
+    width: 100%;
+    overflow: hidden;
+    height: min-content;
+    padding-inline: 0.25rem;
+
+    &:hover,
+    &:focus {
+      border-radius: 0.5rem;
+      outline: 1px solid rgba(0, 0, 0, 0.05);
+    }
+  }
+  &__content {
+    font-size: 14px;
+
+    width: 100%;
+    overflow: hidden;
+    padding: 0.25rem;
+
+    &--html {
+      min-height: 3rem;
+      cursor: pointer;
+
+      &:focus,
+      &:hover {
+        border-radius: 0.5rem;
+        outline: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-weight: 400;
+      }
+      ul,
+      ol,
+      dl,
+      dt,
+      dd {
+        padding-left: 0.75rem;
+      }
+    }
+  }
+  &__actions {
+    --fill-or-color: hsl(0, 0%, 70%);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+
+    &__created-at {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--fill-or-color);
+
+      padding-block: 0.27rem;
+    }
+    &__button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.25rem;
+
+      font: inherit;
+      font-size: 0.8rem;
+
+      block-size: 1.75rem;
+      padding: 0.25rem 0.75rem;
+      border: none;
+      border-radius: 0.5rem;
+      background-color: transparent;
+      cursor: pointer;
+
+      color: var(--fill-or-color);
+      fill: var(--fill-or-color);
+
+      transition: color 0.3s, background-color 0.3s, fill 0.3s;
+
+      &--delete {
+        --focus-hover-color-fill: hsla(0, 80%, 50%, 0.7);
+        --surface-color: hsla(0, 60%, 50%, 0.3);
+      }
+
+      &:focus,
+      &:hover {
+        transition: none;
+        background-color: var(--surface-color);
+
+        color: var(--focus-hover-color-fill);
+        fill: var(--focus-hover-color-fill);
+      }
+
+      svg {
+        height: 75%;
+        width: auto;
+      }
+    }
+  }
+
+  &--skeleton {
+    .card__title,
+    .card__content {
+      font-size: calc(var(--font-size-placeholder) - 2px);
+
+      border-radius: 0.25rem;
+      background-color: #ccc;
+    }
+    .card__title {
+      width: 65%;
+    }
+    .card__content {
+      width: 70%;
+    }
+  }
 }
-.dark-mode .card {
-  background-color: var(--primary-color);
-}
-
-.card__title {
-  width: 100%;
-  font-size: 1.75rem;
-  font-weight: 500;
-  padding-inline: 0.25rem;
-  overflow: hidden;
-  height: min-content;
-}
-.card__title:is(:hover, :focus) {
-  border-radius: 0.5rem;
-  outline: 1px solid rgba(0, 0, 0, 0.05);
-}
-.card__content {
-  width: 100%;
-  font-size: 14px;
-  overflow: hidden;
-  padding: 0.25rem;
-}
-.card__content--html {
-  min-height: 3rem;
-  cursor: pointer;
-}
-.card__content--html:is(:hover, :focus) {
-  border-radius: 0.5rem;
-  outline: 1px solid rgba(0, 0, 0, 0.05);
-}
-.card__content--html h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 400;
-}
-.card__content--html ul,
-ol,
-dl,
-dt,
-dd {
-  padding-left: 0.75rem;
-}
-
-.card__actions {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  --fill-or-color: hsl(0, 0%, 70%);
-}
-
-.card__actions__created-at {
-  color: var(--fill-or-color);
-  font-size: 0.9rem;
-  font-weight: 300;
-  padding-block: 0.27rem;
-}
-
-.card__actions__button {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.25rem;
-
-  font: inherit;
-  font-size: 0.8rem;
-
-  block-size: 1.75rem;
-  padding: 0.25rem 0.75rem;
-  border: none;
-  border-radius: 0.5rem;
-  background-color: transparent;
-  cursor: pointer;
-
-  color: var(--fill-or-color);
-  fill: var(--fill-or-color);
-
-  transition: color 0.3s, background-color 0.3s, fill 0.3s;
-}
-
-.card__actions__button--delete {
-  --focus-hover-color-fill: hsla(0, 80%, 50%, 0.7);
-  --surface-color: hsla(0, 60%, 50%, 0.3);
-}
-
-.card__actions__button:is(:focus, :hover) {
-  transition: none;
-  background-color: var(--surface-color);
-
-  color: var(--focus-hover-color-fill);
-  fill: var(--focus-hover-color-fill);
-}
-
-.card__actions__button svg {
-  height: 75%;
-  width: auto;
-}
-
-.card--skeleton .card__title {
-  width: 65%;
-
-  font-size: calc(var(--font-size-placeholder) - 2px);
-
-  border-radius: 0.25rem;
-  background-color: #ccc;
-}
-.card--skeleton .card__content {
-  width: 70%;
-
-  font-size: var(--font-size-placeholder);
-
-  position: relative;
-  border-radius: 0.25rem;
-  background-color: #ccc;
-}
-
-.dark-mode .card--skeleton .card__content,
-.dark-mode .card--skeleton .card__title {
-  background-color: #333;
+.dark-mode {
+  .card {
+    background-color: var(--primary-color);
+  }
+  .card--skeleton .card__content,
+  .card--skeleton .card__title {
+    background-color: #333;
+  }
 }
 </style>
