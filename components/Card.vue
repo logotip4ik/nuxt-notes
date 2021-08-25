@@ -38,9 +38,6 @@
       v-html="markdown"
     ></div>
     <div v-if="!skeleton" class="card__actions">
-      <p class="card__actions__created-at">
-        Created: {{ formatDateTime(data.createdAt) }}
-      </p>
       <transition name="fade">
         <button
           v-if="!isEditing && isCollapsable"
@@ -50,26 +47,12 @@
           Show Less
         </button>
       </transition>
-      <transition name="fade">
-        <button
-          v-if="!isEditing"
-          class="card__actions__button card__actions__button--delete"
-          @click.stop.prevent="deleteNote"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path
-              d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z"
-            />
-          </svg>
-          Junk
-        </button>
-      </transition>
     </div>
     <transition name="fade">
       <div
         v-if="isCollapsed && !skeleton && isCollapsable"
         class="card__overflow"
-        @click.stop.prevent="isCollapsed = !isCollapsed"
+        @click.stop.prevent="showContents"
       ></div>
     </transition>
   </div>
@@ -77,7 +60,6 @@
 
 <script>
 import { mapState } from 'vuex'
-import { format } from 'timeago.js'
 import DOMPurify from 'dompurify'
 import marked from 'marked'
 
@@ -123,8 +105,8 @@ export default {
     if (elSize < this.MAX_SIZE) this.isCollapsable = false
   },
   methods: {
-    formatDateTime(date) {
-      return format(new Date(date))
+    showContents() {
+      this.isCollapsed = !this.isCollapsed
     },
     cancel() {
       this.$emit('update-creating', false)
@@ -332,7 +314,7 @@ export default {
     --fill-or-color: hsl(0, 0%, 70%);
 
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 
     width: 100%;

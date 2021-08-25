@@ -16,16 +16,20 @@
           name="list"
           class="main__content__notes"
         >
-          <Card
+          <CardWrapper
             v-for="note in sortedNotes"
             :key="note.id"
-            :ref="`note-${note.id}`"
             :data="note"
-            :data-id="note.id"
             class="main__content__notes__note"
-            @update-creating="isCreatingNote = $event"
-            @update-editing="isEditingNote = $event"
-          ></Card>
+          >
+            <Card
+              :ref="`note-${note.id}`"
+              :data="note"
+              :data-id="note.id"
+              @update-creating="isCreatingNote = $event"
+              @update-editing="isEditingNote = $event"
+            ></Card>
+          </CardWrapper>
         </transition-group>
         <Card v-else-if="loading" key="2" skeleton></Card>
       </transition>
