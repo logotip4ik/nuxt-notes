@@ -53,3 +53,8 @@ h5,
 h6 {
   font-family: 'Rubik', sans-serif;
 }
+
+/* JUST FIX OF NUXT-TOASTED */
+.bottom-center {
+  bottom: 3% !important;
+}

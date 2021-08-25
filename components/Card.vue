@@ -260,6 +260,7 @@ export default {
   position: relative;
   padding: 1rem 1.25rem 1rem;
   border-radius: 0.5rem;
+  overflow-wrap: break-word;
   /* shadows from: https://shadows.brumm.af/ */
   /* prettier-ignore */
   box-shadow:
@@ -391,7 +392,7 @@ export default {
   }
 
   &__overflow {
-    --main-color: 220;
+    --main-color: 240;
     --bg-color: var(--main-color), var(--main-color), var(--main-color);
     position: absolute;
     left: 0;
@@ -403,6 +404,7 @@ export default {
     height: 100%;
     pointer-events: all;
     border-radius: 0.5rem;
+    cursor: pointer;
     background-image: linear-gradient(
       to top,
       rgba(var(--bg-color), 1) 15%,
@@ -428,6 +430,7 @@ export default {
   }
 
   &--expanded {
+    // should be exact value not none or auto, becouse animation wont apply
     max-height: 100vh;
   }
 }
@@ -436,7 +439,7 @@ export default {
     background-color: var(--primary-color);
   }
   .card__overflow {
-    --main-color: 100;
+    --main-color: 80;
   }
   .card--skeleton .card__content,
   .card--skeleton .card__title {
