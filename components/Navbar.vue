@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar">
-    <h1 class="navbar__header">Home</h1>
+    <h1 class="navbar__header">Hi, {{ $auth.user.name.split(' ')[0] }}</h1>
     <img
       :src="`${$auth.user.picture}iasdfl;asdkljf;laskdf`"
       alt="profile avatar"
@@ -102,8 +102,13 @@ export default {
   align-items: center;
 }
 .navbar__header {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 300;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  overflow: hidden;
+  width: 100%;
 }
 .navbar__avatar {
   --size: 50px;
