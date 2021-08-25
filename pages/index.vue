@@ -30,6 +30,9 @@
               @update-editing="isEditingNote = $event"
             ></Card>
           </CardWrapper>
+          <div key="-1" aria-hidden="true" style="width: 100%; height: 200px">
+            &nbsp;
+          </div>
         </transition-group>
         <Card v-else-if="loading" key="2" skeleton></Card>
       </transition>
