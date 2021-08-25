@@ -1,9 +1,13 @@
 <template>
   <div
-    :class="{ card: true, 'card--skeleton': skeleton }"
+    :class="{
+      card: true,
+      'card--skeleton': skeleton,
+      'card--expanded': !isCollapsed,
+    }"
     @keypress.ctrl.enter.stop="saveNote"
     @keydown.esc.prevent="cancel"
-    @blur.capture="() => toggleEditing(false)"
+    @blur.capture="() => !isCollapsed && toggleEditing(false)"
   >
     <textarea
       ref="title"
@@ -39,9 +43,18 @@
       </p>
       <transition name="fade">
         <button
+          v-if="!isEditing && isCollapsable"
+          class="card__actions__button card__actions__button--info"
+          @click="isCollapsed = true"
+        >
+          Show Less
+        </button>
+      </transition>
+      <transition name="fade">
+        <button
           v-if="!isEditing"
           class="card__actions__button card__actions__button--delete"
-          @click="deleteNote"
+          @click.stop.prevent="deleteNote"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path
@@ -53,7 +66,11 @@
       </transition>
     </div>
     <transition name="fade">
-      <div v-if="isCollapsed" class="card__overflow"></div>
+      <div
+        v-if="isCollapsed && !skeleton && isCollapsable"
+        class="card__overflow"
+        @click.stop.prevent="isCollapsed = !isCollapsed"
+      ></div>
     </transition>
   </div>
 </template>
@@ -74,6 +91,8 @@ export default {
   data: () => ({
     isEditing: false,
     isCollapsed: true,
+    isCollapsable: true,
+    MAX_SIZE: 300,
   }),
   computed: {
     markdown() {
@@ -98,7 +117,10 @@ export default {
   mounted() {
     if (this.skeleton) return
     this.$refs.title.value = this.data.title
-    this.resize('title')
+
+    const elSize = this.$el.scrollHeight
+
+    if (elSize < this.MAX_SIZE) this.isCollapsable = false
   },
   methods: {
     formatDateTime(date) {
@@ -129,6 +151,8 @@ export default {
         }, 0)
     },
     resize(refId) {
+      console.log('resizing:', refId)
+
       const el = this.$refs[refId]
       if (!el) return
 
@@ -234,7 +258,9 @@ export default {
   --font-size-placeholder: 1.5rem;
 
   width: 100%;
+  max-height: 300px;
 
+  position: relative;
   padding: 1rem 1.25rem 1rem;
   border-radius: 0.5rem;
   /* shadows from: https://shadows.brumm.af/ */
@@ -259,8 +285,9 @@ export default {
     font-weight: 500;
 
     width: 100%;
+    min-height: 2rem;
     overflow: hidden;
-    height: min-content;
+    // height: min-content;
     padding-inline: 0.25rem;
 
     &:hover,
@@ -340,6 +367,11 @@ export default {
 
       transition: color 0.3s, background-color 0.3s, fill 0.3s;
 
+      &--info {
+        --focus-hover-color-fill: hsla(200, 80%, 50%, 0.7);
+        --surface-color: hsla(200, 60%, 50%, 0.2);
+      }
+
       &--delete {
         --focus-hover-color-fill: hsla(0, 80%, 50%, 0.7);
         --surface-color: hsla(0, 60%, 50%, 0.3);
@@ -361,6 +393,26 @@ export default {
     }
   }
 
+  &__overflow {
+    // --bg-color: hsl(0, 0%, 50%);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    display: inline-block;
+
+    width: 100%;
+    height: 100%;
+    pointer-events: all;
+    border-radius: 0.5rem;
+    background-image: linear-gradient(
+      to top,
+      rgba($color: hsl(0, 0%, 40%), $alpha: 1) 15%,
+      rgba($color: hsl(0, 0%, 40%), $alpha: 0.5),
+      rgba($color: hsl(0, 0%, 40%), $alpha: 0)
+    );
+  }
+
   &--skeleton {
     .card__title,
     .card__content {
@@ -376,11 +428,18 @@ export default {
       width: 70%;
     }
   }
+
+  &--expanded {
+    max-height: 100vh;
+  }
 }
 .dark-mode {
   .card {
     background-color: var(--primary-color);
   }
+  // .card__overflow {
+  //   --bg-color: hsla(0, 0%, 30%, 0.2);
+  // }
   .card--skeleton .card__content,
   .card--skeleton .card__title {
     background-color: #333;
