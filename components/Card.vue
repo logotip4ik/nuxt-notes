@@ -7,7 +7,7 @@
     }"
     @keypress.ctrl.enter.stop="saveNote"
     @keydown.esc.prevent="cancel"
-    @blur.capture="() => !isCollapsed && toggleEditing(false)"
+    @blur.capture="() => toggleEditing(false)"
   >
     <textarea
       ref="title"
@@ -129,8 +129,8 @@ export default {
         setTimeout(() => {
           this.resize(el)
           this.$refs[el].focus()
-          this.$el.style.height = 'auto'
         }, 0)
+      this.$el.style.height = 'auto'
     },
     resize(refId) {
       const el = this.$refs[refId]
