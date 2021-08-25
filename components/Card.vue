@@ -283,7 +283,7 @@ export default {
     font-weight: 500;
 
     width: 100%;
-    min-height: 2rem;
+    min-height: 2.25rem;
     overflow: hidden;
     // height: min-content;
     padding-inline: 0.25rem;
