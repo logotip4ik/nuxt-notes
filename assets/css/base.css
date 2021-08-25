@@ -32,6 +32,7 @@ html {
 
   background-color: var(--surface-color);
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 html.dark-mode {

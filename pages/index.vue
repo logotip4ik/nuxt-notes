@@ -145,7 +145,7 @@ export default {
   max-width: 700px;
 
   display: grid;
-  gap: 2rem;
+  gap: 2.75rem;
 }
 .main__content__banner {
   width: 100%;
@@ -185,7 +185,7 @@ export default {
   list-style-type: none;
 
   display: grid;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .main__content__notes__note {

@@ -50,7 +50,7 @@
           v-else-if="isEditing"
           class="card__actions__button card__actions__button--keys"
         >
-          Hit <kbd>Ctrl + S</kbd> to save
+          Hit <kbd>Ctrl + Enter</kbd> to save
         </span>
       </transition>
     </div>
@@ -313,6 +313,31 @@ export default {
       dt,
       dd {
         padding-left: 0.75rem;
+      }
+
+      code {
+        padding: 0.15rem 0.4rem;
+        border-radius: 0.2rem;
+        background-color: hsla(0, 0%, 50%, 0.5);
+        line-height: 1.5;
+
+        font-family: Consolas, 'Courier New', Courier, monospace;
+      }
+
+      a {
+        --link-color: hsla(0, 0%, 50%, 0.9);
+        color: var(--link-color);
+        text-decoration-thickness: 0.25px;
+        transition: color 0.3s;
+
+        &::before {
+          content: '↗';
+          font-size: 2rem;
+        }
+
+        &:hover {
+          color: hsla(0, 0%, 60%, 1);
+        }
       }
     }
   }
