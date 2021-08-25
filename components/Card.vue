@@ -151,8 +151,6 @@ export default {
         }, 0)
     },
     resize(refId) {
-      console.log('resizing:', refId)
-
       const el = this.$refs[refId]
       if (!el) return
 
@@ -177,10 +175,9 @@ export default {
         .catch(() => this.$toast.error('something went, try again later...'))
     },
     updateNote(noteFromServer, noteFromVuex) {
-      noteFromVuex.id = noteFromServer.id
-      noteFromVuex.ownerId = noteFromServer.ownerId
-      noteFromVuex.updatedAt = noteFromServer.updatedAt
-      noteFromVuex.createdAt = noteFromServer.createdAt
+      const fieldsToSet = ['id', 'ownerId', 'updatedAt', 'createdAt']
+
+      fieldsToSet.forEach((key) => (noteFromVuex[key] = noteFromServer[key]))
     },
     saveNote() {
       if (this.$nuxt.isOffline)
