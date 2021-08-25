@@ -47,6 +47,14 @@ export default {
         )
     },
   },
+  mounted() {
+    setTimeout(() => {
+      const { value } = this.$colorMode
+
+      for (let i = 0; i < this.colorModes.length; i++)
+        if (value === this.colorModes[i]) return (this.currentMode = i)
+    }, 0)
+  },
   methods: {
     toggleColorMode() {
       this.currentMode = (this.currentMode + 1) % this.colorModes.length
