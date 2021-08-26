@@ -3,9 +3,24 @@
     <slot></slot>
     <div ref="cardSettings" class="card__settings">
       <div class="card__settings__actions">
-        <p class="card__settings__actions__created-at">
-          Created: {{ formatDateTime(data.createdAt) }}
-        </p>
+        <transition name="fade" mode="out-in">
+          <p
+            v-if="!isShowingUpdatedAt"
+            key="1"
+            class="card__settings__actions__info"
+            @mouseenter="isShowingUpdatedAt = true"
+          >
+            Created: {{ formatDateTime(data.createdAt) }}
+          </p>
+          <p
+            v-else
+            key="2"
+            class="card__settings__actions__info"
+            @mouseleave="isShowingUpdatedAt = false"
+          >
+            Updated: {{ formatDateTime(data.updatedAt) }}
+          </p>
+        </transition>
         <button
           class="
             card__settings__actions__button
@@ -33,6 +48,9 @@ import { format } from 'timeago.js'
 
 export default {
   props: { data: { type: Object, required: true, default: () => ({}) } },
+  data: () => ({
+    isShowingUpdatedAt: false,
+  }),
   computed: {
     ...mapState(['serverHost', 'serverStage']),
   },
@@ -88,10 +106,11 @@ export default {
 
     padding: 0.5rem 0rem;
 
-    &__created-at {
+    &__info {
       font-size: 0.9rem;
       font-weight: 300;
       color: var(--fill-or-color);
+      cursor: pointer;
 
       padding-block: 0.27rem;
     }
@@ -115,11 +134,6 @@ export default {
       fill: var(--fill-or-color);
 
       transition: color 0.3s, background-color 0.3s, fill 0.3s;
-
-      &--info {
-        --focus-hover-color-fill: hsla(200, 80%, 50%, 0.7);
-        --surface-color: hsla(200, 60%, 50%, 0.2);
-      }
 
       &--delete {
         --focus-hover-color-fill: hsla(0, 80%, 50%, 0.7);

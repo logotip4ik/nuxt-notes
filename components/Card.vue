@@ -14,6 +14,7 @@
     "
     @blur.capture="() => toggleEditing(false)"
   >
+    <!-- need wrapper cuz when card is collapsed some of text will be cropped -->
     <div class="flex">
       <textarea
         ref="title"

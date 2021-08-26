@@ -83,7 +83,8 @@ export default {
 
       // ! need to set timeout, becouse of adding to the DOM
       setTimeout(() => {
-        const input = this.$refs[`note-${note.id}`][0].$el.children[0]
+        const input =
+          this.$refs[`note-${note.id}`][0].$el.children[0].children[0]
         input.value = key
         input.focus()
       })
