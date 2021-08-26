@@ -322,7 +322,7 @@ export default {
       code {
         padding: 0.15rem 0.4rem;
         border-radius: 0.2rem;
-        background-color: hsla(0, 0%, 50%, 0.5);
+        background-color: hsla(0, 0%, 60%, 0.3);
         line-height: 1.5;
 
         font-family: Consolas, 'Courier New', Courier, monospace;
