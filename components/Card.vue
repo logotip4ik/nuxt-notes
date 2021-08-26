@@ -358,13 +358,15 @@ export default {
 
       a {
         --link-color: hsla(0, 0%, 50%, 0.9);
+        font: inherit;
+        font-weight: 600;
         color: var(--link-color);
-        text-decoration-thickness: 0.25px;
+        text-decoration-thickness: 0.5px;
         transition: color 0.3s;
 
         &::before {
           content: '↗';
-          font-size: 2rem;
+          font-size: 130%;
         }
 
         &:hover {
