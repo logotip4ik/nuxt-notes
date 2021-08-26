@@ -61,12 +61,11 @@ export default {
 
       for (let i = 0; i < this.colorModes.length; i++)
         if (value === this.colorModes[i]) return (this.currentMode = i)
-
-      // if (this.$colorMode.value === 'dark') this.toggleHighlightStyles(this.$colorMode.value)
     }, 0)
   },
   methods: {
     toggleHighlightStyles(mode) {
+      if (process.server) return
       const lightStylesheet = document.getElementById('highlight-stylesheets')
       const darkStylesheet = document.getElementById(
         'highlight-stylesheets-dark'
