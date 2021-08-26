@@ -28,11 +28,11 @@
       />
     </div>
     <textarea
-      v-if="isEditing"
+      v-show="isEditing"
       ref="content"
       class="card__content no-input"
-      :readonly="skeleton ? 'readonly' : false"
       :value="data.content"
+      :readonly="skeleton ? 'readonly' : false"
       :placeholder="skeleton ? null : '# Some markdown...'"
       @input="() => resize('content')"
       @keydown.tab.prevent="() => insertTab('content')"
@@ -40,7 +40,7 @@
     ></textarea>
     <!-- eslint-disable vue/no-v-html -->
     <div
-      v-else
+      v-show="!isEditing"
       class="card__content card__content--html no-input"
       @click="() => toggleEditing(true, 'content')"
       @focus="() => toggleEditing(true, 'content')"
