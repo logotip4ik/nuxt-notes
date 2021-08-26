@@ -35,6 +35,7 @@
       :value="data.content"
       :placeholder="skeleton ? null : '# Some markdown...'"
       @input="() => resize('content')"
+      @keydown.tab.prevent="() => insertTab('content')"
       @focus="() => toggleEditing(true, 'content')"
     ></textarea>
     <!-- eslint-disable vue/no-v-html -->
@@ -154,6 +155,12 @@ export default {
           this.$refs[el].focus()
         }, 0)
       this.$el.style.height = 'auto'
+    },
+    insertTab(refId) {
+      const el = this.$refs[refId]
+      if (!el) return
+
+      el.value += ' '.repeat(4)
     },
     resize(refId) {
       const el = this.$refs[refId]
