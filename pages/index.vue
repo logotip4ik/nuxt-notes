@@ -26,6 +26,7 @@
               :ref="`note-${note.id}`"
               :data="note"
               :data-id="note.id"
+              class="main__content__notes__note"
               @update-creating="isCreatingNote = $event"
               @update-editing="isEditingNote = $event"
             ></Card>
