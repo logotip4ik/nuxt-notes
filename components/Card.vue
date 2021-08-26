@@ -70,7 +70,6 @@ import DOMPurify from 'dompurify'
 import marked from 'marked'
 
 export default {
-  // TODO: at editing replace junk button with key bindings to save and cancel creating or editing
   // TODO: add like blinking animation to placeholder text in skeleton mode(try to use only css)...
   props: {
     data: { type: Object, required: false, default: () => ({}) },
@@ -89,6 +88,11 @@ export default {
         headerIds: false,
       })
       if (process.server === true) return ''
+      DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+        if (node.tagName !== 'A') return
+        node.setAttribute('target', '_blank')
+        node.setAttribute('rel', 'noopener noreferer')
+      })
       return DOMPurify.sanitize(html)
     },
     ...mapState(['serverHost', 'serverStage']),
