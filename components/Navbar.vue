@@ -47,15 +47,34 @@ export default {
         )
     },
   },
+  watch: {
+    '$colorMode.value': {
+      handler(mode) {
+        this.toggleHighlightStyles(mode)
+      },
+      immediate: true,
+    },
+  },
   mounted() {
     setTimeout(() => {
       const { value } = this.$colorMode
 
       for (let i = 0; i < this.colorModes.length; i++)
         if (value === this.colorModes[i]) return (this.currentMode = i)
+
+      // if (this.$colorMode.value === 'dark') this.toggleHighlightStyles(this.$colorMode.value)
     }, 0)
   },
   methods: {
+    toggleHighlightStyles(mode) {
+      const lightStylesheet = document.getElementById('highlight-stylesheets')
+      const darkStylesheet = document.getElementById(
+        'highlight-stylesheets-dark'
+      )
+
+      lightStylesheet.toggleAttribute('disabled', mode === 'dark')
+      darkStylesheet.toggleAttribute('disabled', mode === 'light')
+    },
     toggleColorMode() {
       this.currentMode = (this.currentMode + 1) % this.colorModes.length
       this.$colorMode.preference = this.colorModes[this.currentMode]

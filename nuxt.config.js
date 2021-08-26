@@ -12,16 +12,28 @@ export default {
       { hid: 'description', name: 'description', content: 'Easy peasy notes' },
       { name: 'format-detection', content: 'telephone=no' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      {
+        id: 'highlight-stylesheets',
+        rel: 'stylesheet',
+        title: 'Github',
+        href: 'https://cdn.jsdelivr.net/gh/highlightjs/highlight.js/src/styles/github.css',
+      },
+      {
+        id: 'highlight-stylesheets-dark',
+        rel: 'stylesheet',
+        title: 'Github Dark',
+        href: 'https://cdn.jsdelivr.net/gh/highlightjs/highlight.js/src/styles/github-dark.css',
+        disabled: true,
+      },
+    ],
   },
   router: {
     middleware: ['auth'],
   },
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [
-    '~/assets/css/base.css',
-    { src: 'highlight.js/styles/github.css', lang: 'css' },
-  ],
+  css: ['~/assets/css/base.css'],
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: ['~/plugins/vue-click-outside.js'],
   // Auto import components: https://go.nuxtjs.dev/config-components
