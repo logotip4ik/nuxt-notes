@@ -9,15 +9,18 @@
     @keydown.esc.prevent="cancel"
     @blur.capture="() => toggleEditing(false)"
   >
-    <textarea
-      ref="title"
-      class="card__title no-input"
-      :readonly="skeleton ? 'readonly' : false"
-      :placeholder="skeleton ? null : 'Untitled'"
-      @input="() => resize('title')"
-      @keydown.enter.prevent="() => toggleEditing(true, 'content')"
-      @focus="() => toggleEditing(true, 'title')"
-    />
+    <div class="flex">
+      <textarea
+        ref="title"
+        rows="1"
+        class="card__title no-input"
+        :readonly="skeleton ? 'readonly' : false"
+        :placeholder="skeleton ? null : 'Untitled'"
+        @input="() => resize('title')"
+        @keydown.enter.prevent="() => toggleEditing(true, 'content')"
+        @focus="() => toggleEditing(true, 'title')"
+      />
+    </div>
     <textarea
       v-if="isEditing"
       ref="content"
@@ -48,6 +51,7 @@
         <span
           v-else-if="isEditing"
           class="card__actions__button card__actions__button--keys"
+          @click="() => saveNote()"
         >
           Hit <kbd>Ctrl + Enter</kbd> to save
         </span>
@@ -112,7 +116,7 @@ export default {
   mounted() {
     if (this.skeleton) return
     this.$refs.title.value = this.data.title
-
+    setTimeout(() => this.resize('title'), 0)
     const elSize = this.$el.scrollHeight
 
     if (elSize < this.MAX_SIZE) this.isCollapsable = false
@@ -150,7 +154,7 @@ export default {
       if (!el) return
 
       el.style.height = 'auto'
-      el.style.height = `${el.scrollHeight + 1}px`
+      el.style.height = `${el.scrollHeight + (refId === 'title' ? -7 : 1)}px`
     },
     deleteNote(sendReq = true) {
       const { notes } = this.$store.state
@@ -243,7 +247,15 @@ export default {
   color: currentColor;
   height: auto;
 
-  display: inline-block;
+  // display: inline-block;
+}
+
+.flex {
+  width: 100%;
+  display: flex;
+  flex: 1 1 0%;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .card {
@@ -278,10 +290,9 @@ export default {
     font-weight: 500;
 
     width: 100%;
-    line-height: 1.2;
-    height: 2.25rem;
+    line-height: 1.3;
     overflow-y: hidden;
-    // height: min-content;
+    flex: 1 1 0%;
     padding-inline: 0.25rem;
 
     &:hover,
