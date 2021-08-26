@@ -5,18 +5,17 @@
       'card--skeleton': skeleton,
       'card--expanded': !isCollapsed,
     }"
-    @keypress.ctrl.enter.stop="saveNote"
+    @keydown.ctrl.enter.stop="saveNote"
     @keydown.esc.prevent="cancel"
     @blur.capture="() => toggleEditing(false)"
   >
     <textarea
       ref="title"
-      rows="1"
       class="card__title no-input"
       :readonly="skeleton ? 'readonly' : false"
       :placeholder="skeleton ? null : 'Untitled'"
       @input="() => resize('title')"
-      @keyup.enter.prevent="() => toggleEditing(true, 'content')"
+      @keydown.enter.prevent="() => toggleEditing(true, 'content')"
       @focus="() => toggleEditing(true, 'title')"
     />
     <textarea
@@ -279,8 +278,9 @@ export default {
     font-weight: 500;
 
     width: 100%;
-    min-height: 2.25rem;
-    overflow: hidden;
+    line-height: 1.2;
+    height: 2.25rem;
+    overflow-y: hidden;
     // height: min-content;
     padding-inline: 0.25rem;
 
