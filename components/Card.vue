@@ -6,7 +6,12 @@
       'card--expanded': !isCollapsed,
     }"
     @keydown.ctrl.enter.stop="saveNote"
-    @keydown.esc.prevent="cancel"
+    @keydown.esc.prevent="
+      () => {
+        cancel()
+        resize('title')
+      }
+    "
     @blur.capture="() => toggleEditing(false)"
   >
     <div class="flex">
@@ -131,7 +136,7 @@ export default {
 
       document.getElementById('dummy-input').focus()
 
-      if (!this.data.title || !this.data.content) this.deleteNote(false)
+      if (!this.data.ownerId) this.deleteNote(false)
       else {
         this.$refs.title.value = this.data.title
         this.$refs.content.value = this.data.content
