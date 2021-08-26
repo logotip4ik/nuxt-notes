@@ -18,7 +18,10 @@ export default {
     middleware: ['auth'],
   },
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ['~/assets/css/base.css'],
+  css: [
+    '~/assets/css/base.css',
+    { src: 'highlight.js/styles/github.css', lang: 'css' },
+  ],
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: ['~/plugins/vue-click-outside.js'],
   // Auto import components: https://go.nuxtjs.dev/config-components

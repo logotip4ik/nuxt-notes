@@ -68,6 +68,7 @@
 import { mapState } from 'vuex'
 import DOMPurify from 'dompurify'
 import marked from 'marked'
+import hljs from 'highlight.js/lib/common'
 
 export default {
   // TODO: add like blinking animation to placeholder text in skeleton mode(try to use only css)...
@@ -86,6 +87,9 @@ export default {
       const html = marked(this.data.content || '', {
         gfm: true,
         headerIds: false,
+        highlight(code, language) {
+          return hljs.highlight(code, { language }).value
+        },
       })
       if (process.server === true) return ''
       DOMPurify.addHook('afterSanitizeAttributes', (node) => {
@@ -322,7 +326,7 @@ export default {
       code {
         padding: 0.15rem 0.4rem;
         border-radius: 0.2rem;
-        background-color: hsla(0, 0%, 60%, 0.3);
+        background-color: hsla(0, 0%, 70%, 0.3);
         line-height: 1.5;
 
         font-family: Consolas, 'Courier New', Courier, monospace;
@@ -463,6 +467,10 @@ export default {
 .dark-mode {
   .card {
     background-color: var(--primary-color);
+
+    &__content--html code {
+      background-color: hsla(0, 0%, 40%, 0.5);
+    }
   }
   .card__overflow {
     --main-color: 80;
