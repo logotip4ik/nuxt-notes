@@ -45,18 +45,15 @@
 
 <script>
 import { mapState } from 'vuex'
-import cardStatus from '~/helpers/card-state'
 // TODO: style login page
 // TODO(later): rework server, becouse it taking to much time to create, update and fetch all the notes
 // TODO(later): rework everthing to work offline
 export default {
   data: () => ({
     loading: true,
-    currentState: cardStatus.IDLE,
     isCreatingNote: false,
     isEditingNote: false,
     sortBy: 'updatedAt',
-    cardStatus
   }),
   computed: {
     ...mapState(['notes']),
@@ -83,7 +80,6 @@ export default {
         updatedAt: Date.now(),
       }
       this.isCreatingNote = true
-      this.currentState = cardStatus.CREATING
       this.$store.state.notes.unshift(note)
 
       // ! need to set timeout, becouse of adding to the DOM
@@ -110,10 +106,7 @@ export default {
             key === 'Backspace' ||
             key.startsWith('F') ||
             this.isEditingNote ||
-            this.isCreatingNote ||
-            this.currentState === cardStatus.CREATING ||
-            this.currentState === cardStatus.EDITING ||
-            this.currentState === cardStatus.SEARCHING
+            this.isCreatingNote
           )
             return
 
