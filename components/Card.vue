@@ -156,11 +156,48 @@ export default {
         }, 0)
       this.$el.style.height = 'auto'
     },
+    // took solution from:
+    // https://stackoverflow.com/questions/1064089/inserting-a-text-where-cursor-is-using-javascript-jquery
     insertTab(refId) {
       const el = this.$refs[refId]
       if (!el) return
+      const text = ' '.repeat(4)
 
-      el.value += ' '.repeat(4)
+      const scrollPos = el.scrollTop
+      let strPos = 0
+      const br =
+        el.selectionStart || el.selectionStart === 0
+          ? 'ff'
+          : document.selection
+          ? 'ie'
+          : false
+      if (br === 'ie') {
+        el.focus()
+        const range = document.selection.createRange()
+        range.moveStart('character', -el.value.length)
+        strPos = range.text.length
+      } else if (br === 'ff') {
+        strPos = el.selectionStart
+      }
+
+      const front = el.value.substring(0, strPos)
+      const back = el.value.substring(strPos, el.value.length)
+      el.value = front + text + back
+      strPos = strPos + text.length
+      if (br === 'ie') {
+        el.focus()
+        const ieRange = document.selection.createRange()
+        ieRange.moveStart('character', -el.value.length)
+        ieRange.moveStart('character', strPos)
+        ieRange.moveEnd('character', 0)
+        ieRange.select()
+      } else if (br === 'ff') {
+        el.selectionStart = strPos
+        el.selectionEnd = strPos
+        el.focus()
+      }
+
+      el.scrollTop = scrollPos
     },
     resize(refId) {
       const el = this.$refs[refId]
