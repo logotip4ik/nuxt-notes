@@ -1,0 +1,3 @@
+[submodule "nuxt-notes-server"]
+	path = nuxt-notes-server
+	url = https://github.com/logotip4ik/nuxt-notes-server
