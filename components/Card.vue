@@ -146,7 +146,8 @@ export default {
     },
     toggleEditing(val = false, el) {
       this.$el.style.height = `${this.$el.scrollHeight}px`
-      this.$emit('update-editing', val)
+      this.$store.commit('update', ['isEditingNote', val])
+      // this.$emit('update-editing', val)
       this.isEditing = val
 
       if (val && el)
