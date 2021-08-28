@@ -1,5 +1,10 @@
 export const state = () => ({
+  q: '',
   notes: [],
+  filter: 'none',
+  isCreatingNote: false,
+  isEditingNote: false,
+  isSearchingNote: false,
   serverHost:
     process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001',
   serverStage: process.env.NODE_ENV === 'production' ? '' : 'dev',

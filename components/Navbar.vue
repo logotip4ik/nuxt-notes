@@ -1,12 +1,23 @@
 <template>
   <nav class="navbar">
-    <h1 class="navbar__header">Hi, {{ $auth.user.name.split(' ')[0] }}</h1>
+    <h1 v-if="!isSearchingNote" class="navbar__header">
+      Hi, {{ $auth.user.name.split(' ')[0] }}
+    </h1>
     <img
-      :src="`${$auth.user.picture}iasdfl;asdkljf;laskdf`"
+      v-if="!isSearchingNote"
+      :src="$auth.user.picture"
       alt="profile avatar"
       class="navbar__avatar"
       data-click-outside-interact="false"
       @click="hideDropdown"
+    />
+    <input
+      v-else
+      ref="search"
+      v-model.lazy="q"
+      class="navbar__search"
+      placeholder="some query..."
+      @keydown.esc.prevent="resetQuery"
     />
     <transition
       :css="false"
@@ -46,8 +57,29 @@ export default {
           ''
         )
     },
+    isSearchingNote: {
+      get() {
+        return this.$store.state.isSearchingNote
+      },
+      set(val) {
+        this.$store.commit('update', ['isSearchingNote', val])
+      },
+    },
+    q: {
+      get() {
+        return this.$store.state.q
+      },
+      set(val) {
+        this.$store.commit('update', ['q', val])
+      },
+    },
   },
   watch: {
+    isSearchingNote(val) {
+      if (!val) return
+
+      setTimeout(() => this.$refs.search.focus(), 0)
+    },
     '$colorMode.value': {
       handler(mode) {
         this.toggleHighlightStyles(mode)
@@ -64,6 +96,11 @@ export default {
     }, 0)
   },
   methods: {
+    resetQuery() {
+      this.isSearchingNote = false
+      this.$store.commit('update', ['filter', 'none'])
+      this.$store.commit('update', ['q', ''])
+    },
     toggleHighlightStyles(mode) {
       if (process.server) return
       const lightStylesheet = document.getElementById('highlight-stylesheets')
@@ -115,7 +152,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .navbar {
   width: 100%;
   position: relative;
@@ -126,36 +163,56 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-.navbar__header {
-  font-size: 1.75rem;
-  font-weight: 300;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 
-  overflow: hidden;
-  width: 100%;
-}
-.navbar__avatar {
-  --size: 50px;
-  aspect-ratio: 1/1;
-  width: var(--size);
-  height: var(--size);
+  &__header {
+    font-size: 1.75rem;
+    font-weight: 300;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
-  object-fit: cover;
-  border-radius: 50%;
-  box-shadow: 0 0 10px -5px rgba(0, 0, 0, 0.25);
-  background-image: linear-gradient(to bottom, #444, #555);
+    overflow: hidden;
+    width: 100%;
+  }
+  &__avatar {
+    --size: 50px;
+    aspect-ratio: 1/1;
+    width: var(--size);
+    height: var(--size);
 
-  transition: transform 0.2s ease-out;
-  cursor: pointer;
-}
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 0 10px -5px rgba(0, 0, 0, 0.25);
+    background-image: linear-gradient(to bottom, #444, #555);
 
-.navbar__avatar:hover {
-  transform: scale(1.005);
-}
-.navbar__avatar:active {
-  transform: scale(0.95);
+    transition: transform 0.2s ease-out;
+    cursor: pointer;
+    &:hover {
+      transform: scale(1.005);
+    }
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+  &__search {
+    display: block;
+
+    font: inherit;
+    font-size: 1.5rem;
+
+    width: 100%;
+    max-width: 800px;
+    min-height: 50px;
+    padding: 0.25rem 0.75rem;
+    margin: 0 auto;
+    border: none;
+    border-radius: 9999px;
+    background-color: hsla(0, 0%, 10%, 0.1);
+    outline: none;
+
+    &::placeholder {
+      color: hsl(0, 0%, 50%);
+    }
+  }
 }
 
 .dropdown {

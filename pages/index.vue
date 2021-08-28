@@ -27,7 +27,6 @@
               :data="note"
               :data-id="note.id"
               class="main__content__notes__note"
-              @update-status="currentState = $event"
               @update-creating="isCreatingNote = $event"
               @update-editing="isEditingNote = $event"
             ></Card>
@@ -51,19 +50,52 @@ import { mapState } from 'vuex'
 export default {
   data: () => ({
     loading: true,
-    isCreatingNote: false,
-    isEditingNote: false,
     sortBy: 'updatedAt',
   }),
   computed: {
-    ...mapState(['notes']),
+    ...mapState(['notes', 'q', 'filter']),
     sortedNotes() {
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      return this.notes.sort((a, b) => {
-        const aDate = new Date(a[this.sortBy])
-        const bDate = new Date(b[this.sortBy])
-        return bDate - aDate
-      })
+      const filters = {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        none: () =>
+          this.notes.sort((a, b) => {
+            const aDate = new Date(a[this.sortBy])
+            const bDate = new Date(b[this.sortBy])
+            return bDate - aDate
+          }),
+        query: () =>
+          this.notes.filter(
+            (note) =>
+              note.title.toLowerCase().includes(this.q.toLowerCase()) ||
+              note.content.toLowerCase().includes(this.q.toLowerCase())
+          ),
+      }
+
+      return filters[this.filter]()
+    },
+    isCreatingNote: {
+      get() {
+        return this.$store.state.isCreatingNote
+      },
+      set(val) {
+        return this.$store.commit('update', ['isCreatingNote', val])
+      },
+    },
+    isEditingNote: {
+      get() {
+        return this.$store.state.isEditingNote
+      },
+      set(val) {
+        this.$store.commit('update', ['isEditingNote', val])
+      },
+    },
+    isSearchingNote: {
+      get() {
+        return this.$store.state.isSearchingNote
+      },
+      set(val) {
+        this.$store.commit('update', ['isSearchingNote', val])
+      },
     },
   },
   mounted() {
@@ -84,35 +116,46 @@ export default {
 
       // ! need to set timeout, becouse of adding to the DOM
       setTimeout(() => {
-        const input =
+        const textarea =
           this.$refs[`note-${note.id}`][0].$el.children[0].children[0]
-        input.value = key
-        input.focus()
+        textarea.value = key
+        textarea.focus()
       })
     },
     listenForKeyStrokes() {
-      document.body.addEventListener(
-        'keydown',
-        ({ altKey, shiftKey, metaKey, key }) => {
-          if (
-            this.loading ||
-            altKey ||
-            shiftKey ||
-            metaKey ||
-            key === 'Tab' ||
-            key === 'Escape' ||
-            key === 'Control' ||
-            key === 'CapsLock' ||
-            key === 'Backspace' ||
-            key.startsWith('F') ||
-            this.isEditingNote ||
-            this.isCreatingNote
-          )
-            return
+      document.body.addEventListener('keydown', (event) => {
+        const { altKey, shiftKey, metaKey, ctrlKey, key } = event
 
-          this.createNote(key)
-        }
-      )
+        if (ctrlKey && key === 'f') return this.searchNote(event)
+        if (this.isSearchingNote && key === 'Escape')
+          return this.searchNote(event)
+        if (
+          this.loading ||
+          altKey ||
+          shiftKey ||
+          metaKey ||
+          ctrlKey ||
+          key === 'Tab' ||
+          key === 'Escape' ||
+          key === 'CapsLock' ||
+          key === 'Backspace' ||
+          key.startsWith('F') ||
+          this.isEditingNote ||
+          this.isSearchingNote ||
+          this.isCreatingNote
+        )
+          return
+
+        this.createNote(key)
+      })
+    },
+    searchNote(event) {
+      event.preventDefault()
+      this.isSearchingNote = !this.isSearchingNote
+      this.$store.commit('update', [
+        'filter',
+        this.isSearchingNote ? 'query' : 'none',
+      ])
     },
     fetchNotes() {
       const { serverHost, serverStage } = this.$store.state
