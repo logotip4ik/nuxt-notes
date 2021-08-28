@@ -72,4 +72,11 @@ export default {
     position: 'bottom-center',
     duration: 2000,
   },
+  axios: {
+    headers: {
+      common: {
+        'Access-Control-Allow-Origin': '*',
+      },
+    },
+  },
 }

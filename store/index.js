@@ -6,8 +6,10 @@ export const state = () => ({
   isEditingNote: false,
   isSearchingNote: false,
   serverHost:
-    process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001',
-  serverStage: process.env.NODE_ENV === 'production' ? '' : 'dev',
+    process.env.NODE_ENV === 'production'
+      ? 'https://3oepaltxs1.execute-api.us-east-1.amazonaws.com'
+      : 'http://localhost:3001',
+  serverStage: process.env.NODE_ENV === 'production' ? 'dev' : 'dev',
 })
 
 export const mutations = {

@@ -161,6 +161,7 @@ export default {
       const { serverHost, serverStage } = this.$store.state
       const { email, name, picture } = this.$auth.user
 
+      this.$axios.setHeader('Access-Control-Allow-Origin', '*')
       this.$axios.setHeader('Email', email)
       this.$axios.setHeader('Name', name)
       this.$axios.setHeader('Picture', picture)
