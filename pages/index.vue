@@ -10,7 +10,7 @@
       </button>
       <transition name="fade" mode="out-in">
         <transition-group
-          v-if="!loading"
+          v-if="fetchedNotes"
           key="1"
           tag="ul"
           name="list"
@@ -35,7 +35,7 @@
             &nbsp;
           </div>
         </transition-group>
-        <Card v-else-if="loading" key="2" skeleton></Card>
+        <Card v-else-if="!fetchedNotes" key="2" skeleton></Card>
       </transition>
     </div>
     <input id="dummy-input" aria-hidden="true" />
@@ -49,11 +49,10 @@ import { mapState } from 'vuex'
 // TODO(later): rework everthing to work offline
 export default {
   data: () => ({
-    loading: true,
     sortBy: 'updatedAt',
   }),
   computed: {
-    ...mapState(['notes', 'q', 'filter']),
+    ...mapState(['notes', 'q', 'filter', 'fetchedNotes']),
     sortedNotes() {
       const filters = {
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
@@ -99,7 +98,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchNotes()
+    if (!this.$store.state.fetchedNotes) this.fetchNotes()
     this.listenForKeyStrokes()
   },
   methods: {
@@ -158,7 +157,7 @@ export default {
       ])
     },
     fetchNotes() {
-      const { serverHost, serverStage } = this.$store.state
+      const { serverHost, serverStage, fetchedNotes } = this.$store.state
       const { email, name, picture } = this.$auth.user
 
       this.$axios.setHeader('Access-Control-Allow-Origin', '*')
@@ -166,9 +165,13 @@ export default {
       this.$axios.setHeader('Name', name)
       this.$axios.setHeader('Picture', picture)
 
+      if (fetchedNotes) return
       this.$axios
         .$get(`${serverHost}/${serverStage}/note`)
-        .then(({ data }) => this.$store.commit('update', ['notes', data]))
+        .then(({ data }) => {
+          this.$store.commit('update', ['notes', data])
+          this.$store.commit('update', ['fetchedNotes', true])
+        })
         .finally(() => (this.loading = false))
     },
   },

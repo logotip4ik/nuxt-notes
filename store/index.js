@@ -1,6 +1,7 @@
 export const state = () => ({
   q: '',
   notes: [],
+  fetchedNotes: false,
   filter: 'none',
   isCreatingNote: false,
   isEditingNote: false,
