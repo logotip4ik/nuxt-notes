@@ -1,6 +1,10 @@
 <template>
   <nav class="navbar">
-    <h1 v-if="!isSearchingNote" class="navbar__header">
+    <h1
+      v-if="!isSearchingNote"
+      class="navbar__header"
+      @click="() => $router.push({ name: 'index' })"
+    >
       Hi, {{ $auth.user.name.split(' ')[0] }}
     </h1>
     <img
@@ -32,7 +36,17 @@
         <li class="dropdown__item" @click="toggleColorMode">
           {{ currentModeName }} Mode
         </li>
-        <li class="dropdown__item" @click="hideDropdown">Settings</li>
+        <li
+          class="dropdown__item"
+          @click="
+            () => {
+              $router.push({ name: 'settings' })
+              hideDropdown()
+            }
+          "
+        >
+          Settings
+        </li>
         <li class="dropdown__item" @click="logout">Logout</li>
       </ul>
     </transition>
@@ -172,6 +186,7 @@ export default {
 
     overflow: hidden;
     width: 100%;
+    cursor: pointer;
   }
   &__avatar {
     --size: 50px;
