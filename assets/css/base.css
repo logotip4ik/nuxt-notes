@@ -59,3 +59,13 @@ h6 {
 .bottom-center {
   bottom: 3% !important;
 }
+
+/* NUXT PAGE TRANSITIONS */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.4s;
+}
+.page-enter,
+.page-leave-active {
+  opacity: 0;
+}
