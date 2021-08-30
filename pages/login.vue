@@ -1,7 +1,6 @@
 <template>
   <div class="main">
     <h1>Wait logging you in...</h1>
-    <!-- <button class="main__button" @click="login">login</button> -->
   </div>
 </template>
 
