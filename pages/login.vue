@@ -39,6 +39,7 @@ button {
   font: inherit;
   font-size: 1.1rem;
   text-transform: uppercase;
+  color: currentColor;
 
   cursor: pointer;
   transition: transform 0.4s ease;
