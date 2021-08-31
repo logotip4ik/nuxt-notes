@@ -49,9 +49,10 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa',
+    // '@nuxtjs/pwa',
     '@nuxtjs/auth-next',
     '@nuxtjs/toast',
+    'nuxt-vue-select',
   ],
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: { manifest: { lang: 'en' } },
