@@ -48,20 +48,19 @@ import { mapState } from 'vuex'
 // TODO(later): rework server, becouse it taking to much time to create, update and fetch all the notes
 // TODO(later): rework everthing to work offline
 export default {
-  data: () => ({
-    sortBy: 'updatedAt',
-  }),
   computed: {
-    ...mapState(['notes', 'q', 'filter', 'fetchedNotes']),
+    ...mapState(['notes', 'q', 'filter', 'fetchedNotes', 'sortBy']),
     sortedNotes() {
       const filters = {
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        none: () =>
-          this.notes.sort((a, b) => {
-            const aDate = new Date(a[this.sortBy])
-            const bDate = new Date(b[this.sortBy])
+        none: () => {
+          const sortBy = `${this.sortBy.toLowerCase()}At`
+          return this.notes.sort((a, b) => {
+            const aDate = new Date(a[sortBy])
+            const bDate = new Date(b[sortBy])
             return bDate - aDate
-          }),
+          })
+        },
         query: () =>
           this.notes.filter(
             (note) =>
@@ -97,11 +96,21 @@ export default {
       },
     },
   },
+  watch: {
+    sortBy(val) {
+      localStorage.setItem('nn__sortBy', val)
+    },
+  },
   mounted() {
     if (!this.$store.state.fetchedNotes) this.fetchNotes()
     this.listenForKeyStrokes()
+    this.checkSortBy()
   },
   methods: {
+    checkSortBy() {
+      const sortBy = localStorage.getItem('nn__sortBy')
+      if (sortBy) this.$store.commit('update', ['sortBy', sortBy])
+    },
     createNote(key) {
       const note = {
         id: Math.floor(Math.random() * 1000),

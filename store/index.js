@@ -3,6 +3,7 @@ export const state = () => ({
   notes: [],
   fetchedNotes: false,
   filter: 'none',
+  sortBy: 'Created',
   isCreatingNote: false,
   isEditingNote: false,
   isSearchingNote: false,
