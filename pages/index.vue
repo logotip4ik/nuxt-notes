@@ -1,7 +1,14 @@
 <template>
-  <Tutorial/>
+  <div role="main" class="main"></div>
 </template>
 
 <script>
-export default {}
+import { constants } from '~/helpers'
+
+export default {
+  beforeMount() {
+    const gunUser = localStorage.getItem(`${constants.GUN_PREFIX}user`)
+    if (!gunUser) return (window.location.pathname = '/login')
+  },
+}
 </script>
