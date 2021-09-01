@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@200;400;600&display=swap');
+
+:root {
+  /* COLD COLORS */
+  --primary-color: #7868e6;
+  --secondary-color: #b8b5ff;
+  --surface-color: #e4fbff;
+  --surface-color: #edeef7;
+
+  /* RED`ISH` COLORS */
+  --primary-color: #f25287;
+  --secondary-color: #f7d9d9;
+  --surface-color: #f9f3f3;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  min-height: 100vh;
+  font-size: 16px;
+  font-family: 'Railway', system-ui, sans-serif;
+  background-color: var(--surface-color);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  /* .4s magic number */
+  transition: opacity 0.4s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
