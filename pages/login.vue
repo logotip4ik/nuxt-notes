@@ -78,7 +78,6 @@
 </template>
 
 <script>
-// TODO: fix hover on buttons
 // TODO: init gun.js
 
 export default {
@@ -183,7 +182,7 @@ export default {
 
           &:focus-within {
             &::after {
-              transform: translate(-50%, 50%) scaleX(1);
+              transform: translate(-50%, 25%) scaleX(1);
             }
           }
         }
@@ -231,7 +230,7 @@ export default {
 
           &:hover,
           &:focus {
-            background-color: hsl(0, 0%, 50% / 0.6);
+            background-color: hsla(0, 0%, 50%, 0.6);
           }
         }
         &:hover,
@@ -277,21 +276,25 @@ export default {
           }
 
           &::after {
+            content: '';
             position: absolute;
-            z-index: 10;
+            z-index: -1;
 
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             border-radius: var(--custom-border-radius);
-            background-color: hsl(0, 0%, 50% / 0);
+            background-color: hsla(0, 0%, 50%, 0);
+
+            transition: background-color 0.4s ease;
           }
 
           &:hover,
           &:focus {
             &::after {
-              background-color: hsl(0, 0%, 50% / 0.5);
+              transition: none;
+              background-color: hsla(0, 0%, 25%, 0.125);
             }
           }
         }
