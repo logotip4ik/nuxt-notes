@@ -164,9 +164,9 @@ export default {
       const { email, name, picture } = this.$auth.user
 
       this.$axios.setHeader('Access-Control-Allow-Origin', '*')
-      this.$axios.setHeader('Email', email)
-      this.$axios.setHeader('Name', name)
-      this.$axios.setHeader('Picture', picture)
+      this.$axios.setHeader('Email', encodeURI(email))
+      this.$axios.setHeader('Name', encodeURI(name))
+      this.$axios.setHeader('Picture', encodeURI(picture))
 
       if (fetchedNotes) return
       this.$axios
