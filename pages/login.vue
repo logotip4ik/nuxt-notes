@@ -1,21 +1,14 @@
 <template>
   <div class="main">
-    <transition name="fade" mode="out-in">
-      <button v-if="!loggingIn" @click="login">Log in</button>
-      <h1 v-else>Wait, Logging you in...</h1>
-    </transition>
+    <button @click="login">Log in</button>
   </div>
 </template>
 
 <script>
 export default {
   layout: 'login',
-  data: () => ({
-    loggingIn: false,
-  }),
   methods: {
     login() {
-      this.loggingIn = false
       this.$auth.loginWith('auth0')
     },
   },

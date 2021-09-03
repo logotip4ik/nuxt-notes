@@ -65,7 +65,6 @@ export default {
         domain: 'bogdankostyuk.eu.auth0.com',
         scope: ['profile', 'email'],
         clientId: process.env.CLIENT_ID,
-        audience: 'note-app-api',
       },
     },
   },
