@@ -20,7 +20,7 @@
 <script>
 // TODO: add some settings to let user change theirs name or picture, but
 // firstly need to add `fetchUser` method to index, cuz current website is taking
-// cuser info from auth0
+// user info from auth0
 export default {
   data: () => ({
     options: ['Created', 'Updated'],
