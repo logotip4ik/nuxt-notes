@@ -96,11 +96,6 @@ export default {
       },
     },
   },
-  watch: {
-    sortBy(val) {
-      localStorage.setItem('nn__sortBy', val)
-    },
-  },
   mounted() {
     if (!this.$store.state.fetchedNotes) this.fetchNotes()
     this.listenForKeyStrokes()
@@ -109,7 +104,7 @@ export default {
   methods: {
     checkSortBy() {
       const sortBy = localStorage.getItem('nn__sortBy')
-      if (sortBy) this.$store.commit('update', ['sortBy', sortBy])
+      if (sortBy) this.$store.commit('update', ['sortBy', JSON.parse(sortBy)])
     },
     createNote(key) {
       const note = {

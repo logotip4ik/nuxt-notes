@@ -32,6 +32,7 @@ export default {
       },
       set(val) {
         this.$store.commit('update', ['sortBy', val])
+        localStorage.setItem('nn__sortBy', JSON.stringify(val))
       },
     },
   },
