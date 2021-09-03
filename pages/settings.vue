@@ -9,6 +9,8 @@
           <v-select
             v-model="sortBy"
             :options="options"
+            name="sort"
+            class="settings__list__item__select"
             @input="checkIfValid"
           ></v-select>
         </client-only>
@@ -96,6 +98,11 @@ export default {
       .v-select {
         flex-grow: 1;
         max-width: 175px;
+
+        .vs__dropdown-option--highlight {
+          color: inherit;
+          background-color: var(--secondary-color);
+        }
       }
     }
   }
