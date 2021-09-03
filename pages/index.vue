@@ -138,7 +138,6 @@ export default {
         if (this.isSearchingNote && key === 'Escape')
           return this.searchNote(event)
         if (
-          this.loading ||
           altKey ||
           shiftKey ||
           metaKey ||
@@ -177,11 +176,13 @@ export default {
       if (fetchedNotes) return
       this.$axios
         .$get(`${serverHost}/${serverStage}/note`)
-        .then(({ data }) => {
-          this.$store.commit('update', ['notes', data])
-          this.$store.commit('update', ['fetchedNotes', true])
-        })
-        .finally(() => (this.loading = false))
+        .then(({ data }) => this.$store.commit('update', ['notes', data]))
+        .catch(() =>
+          this.$toast.error(
+            'something went with fetching notes, try again later'
+          )
+        )
+        .finally(() => this.$store.commit('update', ['fetchedNotes', true]))
     },
   },
 }
