@@ -60,11 +60,19 @@ export default {
   build: {},
 
   auth: {
+    resetOnError: true,
+    redirect: {
+      callback: '/login',
+      home: '/',
+      login: '/login',
+      logout: '/login',
+    },
     strategies: {
       auth0: {
         domain: 'bogdankostyuk.eu.auth0.com',
         scope: ['profile', 'email'],
         clientId: process.env.CLIENT_ID,
+        audience: 'note-app-api',
       },
     },
   },
