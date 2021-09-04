@@ -1,5 +1,9 @@
 # note-taking-app
 
+## Warning⚠
+idk why, but oauth0 don't wont to work with public urls
+need to fix this, but 2 weeks later cannot fix it😢
+
 ## Build Setup
 
 ```bash
@@ -67,3 +71,6 @@ More information about the usage of this directory in [the documentation](https:
 This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
 
 More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
+
+## TODO
+- [ ] fix oauth0 problem
