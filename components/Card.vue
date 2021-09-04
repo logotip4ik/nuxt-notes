@@ -385,6 +385,17 @@ export default {
         padding-left: 0.75rem;
       }
 
+      pre {
+        width: 100%;
+        height: max-content;
+        padding: 0.2rem 0.5rem;
+        border-radius: 0.5rem;
+        background-color: hsla(0, 0%, 70%, 0.3);
+        code {
+          background-color: transparent;
+        }
+      }
+
       code {
         padding: 0.15rem 0.4rem;
         border-radius: 0.2rem;
@@ -532,7 +543,8 @@ export default {
   .card {
     background-color: var(--primary-color);
 
-    &__content--html code {
+    &__content--html code,
+    pre {
       background-color: hsla(0, 0%, 40%, 0.5);
     }
   }
