@@ -11,6 +11,7 @@
     "lint": "yarn lint:js"
   },
   "dependencies": {
+    "cookie-universal-nuxt": "^2.1.5",
     "core-js": "^3.15.1",
     "gun": "^0.2020.1234",
     "nuxt": "^2.15.7"

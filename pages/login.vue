@@ -5,8 +5,8 @@
       <form
         class="login__container__form"
         autocomplete="off"
-        @submit.prevent
-        @reset.prevent
+        @submit.prevent="submitForm"
+        @reset.prevent="resetForm"
       >
         <div class="login__container__form__item">
           <label for="username" class="login__container__form__item__label">
@@ -14,6 +14,7 @@
           </label>
           <div class="login__container__form__item__wrapper">
             <input
+              v-model="username"
               name="username"
               class="login__container__form__item__input"
             />
@@ -25,9 +26,11 @@
           </label>
           <div class="login__container__form__item__wrapper">
             <input
+              v-model="password"
               name="password"
               :type="isShowingPassword ? 'text' : 'password'"
               class="login__container__form__item__input"
+              @keydown.enter.prevent="submitForm"
             />
             <button
               class="login__container__form__item__button"
@@ -79,6 +82,8 @@
 
 <script>
 // TODO: init gun.js
+import { mapActions } from 'vuex'
+import { constants } from '~/helpers'
 
 export default {
   data: () => ({
@@ -87,6 +92,18 @@ export default {
     isShowingPassword: false,
   }),
   methods: {
+    ...mapActions(['createGunUser']),
+    submitForm() {
+      const user = { username: this.username, password: this.password }
+      this.createGunUser(user).then(() => {
+        const oneWeekFromNow = Date.now() + 1000 * 60 * 60 * 24 * 7
+        this.$cookies.set(`${constants.GUN_PREFIX}user`, user, {
+          expires: new Date(oneWeekFromNow),
+          secure: true,
+        })
+        this.$router.push({ name: 'index' })
+      })
+    },
     resetForm() {
       this.username = ''
       this.password = ''
