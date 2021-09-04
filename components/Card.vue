@@ -391,7 +391,7 @@ export default {
         background-color: hsla(0, 0%, 70%, 0.3);
         line-height: 1.5;
 
-        font-family: Consolas, 'Courier New', Courier, monospace;
+        font-family: 'Courier Prime', Consolas, Courier, monospace;
       }
 
       a {
