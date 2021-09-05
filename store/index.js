@@ -2,6 +2,8 @@ import { gun, constants } from '~/helpers'
 
 export const state = () => ({
   isLoggedIn: false,
+  serverHost:
+    process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8765',
 })
 
 export const mutations = {
@@ -21,10 +23,13 @@ export const actions = {
         .auth(username, password, () => resolve((state.isLoggedIn = true)))
     })
   },
-  nuxtServerInit(_, { redirect, app }) {
+  async nuxtServerInit({ state }, { redirect, app, $axios }) {
     const user = app.$cookies.get(`${constants.GUN_PREFIX}user`)
 
     if (!user) return redirect('/login')
+    const { ok } = await $axios.$post(`${state.serverHost}/authorize`, user)
+    if (!ok) return redirect('/login')
+    state.isLoggedIn = true
   },
 }
 

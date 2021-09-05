@@ -93,14 +93,21 @@ export default {
   }),
   methods: {
     ...mapActions(['createGunUser']),
-    submitForm() {
+    async submitForm() {
       const user = { username: this.username, password: this.password }
+      await this.$axios
+        .$post(`${this.$store.state.serverHost}/authorize`, user)
+        .catch((err) => {
+          console.log(err.message)
+          this.$toast.error('Something went wrong, please try again later')
+        })
       this.createGunUser(user).then(() => {
         const oneWeekFromNow = Date.now() + 1000 * 60 * 60 * 24 * 7
         this.$cookies.set(`${constants.GUN_PREFIX}user`, user, {
           expires: new Date(oneWeekFromNow),
           secure: true,
         })
+        this.$toast.success('Successfully logged in!')
         this.$router.push({ name: 'index' })
       })
     },
