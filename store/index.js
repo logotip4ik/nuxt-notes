@@ -2,6 +2,7 @@ import { gun, constants } from '~/helpers'
 
 export const state = () => ({
   isLoggedIn: false,
+  notes: [],
   serverHost:
     process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8765',
 })
