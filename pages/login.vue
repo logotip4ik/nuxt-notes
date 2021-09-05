@@ -86,6 +86,7 @@ import { mapActions } from 'vuex'
 import { constants } from '~/helpers'
 
 export default {
+  layout: 'login',
   data: () => ({
     username: '',
     password: '',
