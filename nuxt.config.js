@@ -38,5 +38,5 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
-  toast: { position: 'bottom-center' },
+  toast: { position: 'bottom-center', duration: 2000 },
 }
