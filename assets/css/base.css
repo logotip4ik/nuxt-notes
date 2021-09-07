@@ -30,7 +30,7 @@ html {
 .fade-enter-active,
 .fade-leave-active {
   /* .4s magic number */
-  transition: opacity 0.4s;
+  transition: opacity 0.1s;
 }
 .fade-enter,
 .fade-leave-to {
