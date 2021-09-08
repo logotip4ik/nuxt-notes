@@ -60,7 +60,6 @@ export default {
       return format(new Date(date))
     },
     deleteNote() {
-      this.$store.commit('update', ['isNextToDelete', true])
       gunUser.get('notes').get(this.data._['#']).put(null)
     },
   },
