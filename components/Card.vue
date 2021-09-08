@@ -137,7 +137,6 @@ export default {
   },
   methods: {
     deleteNote() {
-      console.log('DELETING THIS NOTE: ', this.data)
       gunUser.get('notes').get(this.data._['#']).put(null)
     },
     saveNote() {
@@ -160,7 +159,6 @@ export default {
     toggleEditing(val = false, el) {
       this.$el.style.height = `${this.$el.scrollHeight}px`
       this.$store.commit('update', ['isEditingNote', val])
-      // this.$emit('update-editing', val)
       this.isEditing = val
 
       if (val && el)
