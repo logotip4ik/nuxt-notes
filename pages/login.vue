@@ -83,7 +83,7 @@
 <script>
 // TODO: init gun.js
 import { mapActions } from 'vuex'
-import { constants } from '~/helpers'
+import { constants, gunUser } from '~/helpers'
 
 export default {
   layout: 'login',
@@ -101,7 +101,14 @@ export default {
         .catch(() =>
           this.$toast.error('Something went wrong, please try again later')
         )
-      this.createGunUser(user).then(() => {
+      // gun.user().
+      if (!user.username || !user.password) return
+      // Need to check for username uniqueness
+      if (user.password.length < 8) return
+      gunUser.recall({ sessionStorage: true })
+      gunUser.create(user.username, user.password)
+      gunUser.auth(user.username, user.password, () => {
+        this.$store.commit('update', ['isLoggedIn', true])
         const oneWeekFromNow = Date.now() + 1000 * 60 * 60 * 24 * 7
         this.$cookies.set(`${constants.GUN_PREFIX}user`, user, {
           expires: new Date(oneWeekFromNow),
