@@ -101,7 +101,6 @@ export default {
         .catch(() =>
           this.$toast.error('Something went wrong, please try again later')
         )
-      // gun.user().
       if (!user.username || !user.password) return
       // Need to check for username uniqueness
       if (user.password.length < 8) return
