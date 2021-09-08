@@ -62,6 +62,11 @@
         >
           Hit <kbd>Ctrl + Enter</kbd> to save
         </span>
+        <span
+          v-else
+          class="card__actions__button card__actions__button--nothing"
+          >&nbsp;</span
+        >
       </transition>
     </div>
     <transition name="fade">
@@ -132,28 +137,25 @@ export default {
   },
   methods: {
     deleteNote() {
-      gunUser.get(this.data._['#']).put(null)
-    },
-    updateNote(noteFromServer, noteFromVuex) {
-      const fieldsToSet = ['id', 'ownerId', 'updatedAt', 'createdAt']
-
-      fieldsToSet.forEach((key) => (noteFromVuex[key] = noteFromServer[key]))
+      console.log('DELETING THIS NOTE: ', this.data)
+      gunUser.get('notes').get(this.data._['#']).put(null)
     },
     saveNote() {
       const data = {
         title: this.$refs.title.value,
         content: this.$refs.content.value,
       }
+      this.$emit('update-creating', false)
       document.getElementById('dummy-input').focus()
       gunUser.get('notes').get(this.data._['#']).put(data)
     },
     cancel() {
-      this.$emit('update-creating', false)
       this.toggleEditing(false)
 
       document.getElementById('dummy-input').focus()
-
-      if (!this.data.title || !this.data.content) this.deleteNote()
+      if (!this.$store.state.isCreatingNote) return
+      this.deleteNote()
+      this.$emit('update-creating', false)
     },
     toggleEditing(val = false, el) {
       this.$el.style.height = `${this.$el.scrollHeight}px`
