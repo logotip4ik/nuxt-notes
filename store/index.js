@@ -51,9 +51,14 @@ export const actions = {
 
     if (!user) return redirect('/login')
     state.user = user
-    const { ok } = await $axios.$post(`${state.serverHost}/authorize`, user)
-    if (!ok) return redirect('/login')
     state.isLoggedIn = true
+    try {
+      const { ok } = await $axios.$post(`${state.serverHost}/authorize`, user)
+      if (!ok) return redirect('/login')
+    } catch (error) {
+      // eslint-disable-next-line
+      console.warn('probably no internet...')
+    }
   },
 }
 
