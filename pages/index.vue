@@ -210,7 +210,7 @@ export default {
       max-width: 700px;
 
       &__note {
-        transition: all 0.1s ease;
+        transition: all 0.2s ease;
       }
     }
   }
@@ -233,11 +233,7 @@ export default {
   opacity: 0;
 }
 
-.list-enter-active {
-  transition-duration: 0;
-}
 .list-leave-active {
-  transition-duration: 0.4s;
   position: absolute;
 }
 </style>
