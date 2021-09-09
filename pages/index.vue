@@ -49,6 +49,7 @@ import { gunUser, gun, constants } from '~/helpers'
 export default {
   data: () => ({
     isLoading: true,
+    keysToInsert: '',
   }),
   computed: {
     notes() {
@@ -106,6 +107,22 @@ export default {
     },
     setupListeners() {
       window.addEventListener('keydown', (ev) => {
+        // * this is not the same becouse of isCreating, we need to check only for keys
+        if (
+          !ev.key.startsWith('F') &&
+          ev.key !== 'Enter' &&
+          ev.key !== 'Control' &&
+          ev.key !== 'Escape' &&
+          ev.key !== 'Tab' &&
+          ev.key !== 'Capslock' &&
+          !ev.metaKey &&
+          !ev.altKey &&
+          !ev.altKey &&
+          !ev.shiftKey &&
+          !this.isLoading &&
+          !this.isEditingNote
+        )
+          this.keysToInsert += ev.key
         if (
           ev.key.startsWith('F') ||
           ev.key === 'Enter' ||
@@ -117,9 +134,9 @@ export default {
           ev.altKey ||
           ev.altKey ||
           ev.shiftKey ||
-          this.isCreatingNote ||
+          this.isLoading ||
           this.isEditingNote ||
-          this.isLoading
+          this.isCreatingNote
         )
           return
 
@@ -127,7 +144,7 @@ export default {
         this.createNote(ev.key)
       })
     },
-    createNote(key) {
+    createNote() {
       this.isCreatingNote = true
       const newNote = {
         id: nanoid(32),
@@ -145,8 +162,10 @@ export default {
         .then((val) =>
           setTimeout(() => {
             const noteRef = this.$refs[`note-${newNote.id}`][0]
-            noteRef.$el.children[0].children[0].value += key
+            noteRef.$el.children[0].children[0].value += this.keysToInsert
             noteRef.$el.children[0].children[0].focus()
+
+            this.keysToInsert = ''
           }, 0)
         )
     },
