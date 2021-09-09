@@ -98,9 +98,7 @@ export default {
       const user = { username: this.username, password: this.password }
       await this.$axios
         .$post(`${this.$store.state.serverHost}/authorize`, user)
-        .catch(() =>
-          this.$toast.error('Something went wrong, please try again later')
-        )
+        .catch(() => this.$toast.warn('No internet connection!'))
       if (!user.username || !user.password) return
       // Need to check for username uniqueness
       if (user.password.length < 8) return
