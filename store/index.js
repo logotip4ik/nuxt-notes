@@ -9,7 +9,9 @@ export const state = () => ({
   isEditingNote: false,
   isNextToDelete: false,
   serverHost:
-    process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8765',
+    process.env.NODE_ENV === 'production'
+      ? 'https://gun-notes.herokuapp.com'
+      : 'http://localhost:8765',
 })
 
 export const mutations = {
