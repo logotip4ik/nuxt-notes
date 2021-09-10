@@ -1,3 +1,4 @@
 [submodule "server"]
 	path = server
 	url = https://github.com/logotip4ik/nuxt-notes-server
+	branch = gun.js
