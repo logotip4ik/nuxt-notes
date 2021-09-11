@@ -1,1 +1,1 @@
-- [ ] fix somehow oauth0 problem callback login
+- [x] fix somehow oauth0 problem callback login
