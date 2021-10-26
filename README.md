@@ -1,9 +1,5 @@
 # note-taking-app
 
-## Warning⚠
-idk why, but oauth0 don't wont to work with public urls
-need to fix this, but 2 weeks later cannot fix it😢
-
 ## Build Setup
 
 ```bash
